@@ -143,4 +143,71 @@ public class NoiseTests
         plt.SavePng(path, 500, 500);
         Console.WriteLine($"Saved plot to {path}");
     }
+
+    [TestMethod]
+    public void TestPinkNoise1D()
+    {
+        const int Seed = 44;
+        const int Octaves = 2;
+
+        var noise = new PinkNoise(Seed, Octaves);
+
+        const int SampleCount = 50;
+
+        double[] x = new double[SampleCount];
+        double[] y = new double[SampleCount];
+
+        for (int i = 0; i < SampleCount; i++)
+        {
+            x[i] = i;
+            y[i] = noise.GetValue(i, 1);
+        }
+
+        var plt = new Plot();
+        var scatter = plt.Add.Scatter(x, y);
+        scatter.MarkerSize = 0;
+        plt.Title("1D Pink Noise");
+        plt.XLabel("X");
+        plt.YLabel("Noise Value");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestPinkNoise2D()
+    {
+        const int Seed = 256;
+        const int Octaves = 2;
+
+        var noise = new PinkNoise(Seed, Octaves);
+
+        const int SampleCountX = 50;
+        const int SampleCountY = 50;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Pink Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
 }

@@ -9,7 +9,7 @@
             Seed = seed;
         }
 
-        public float GetValue(int x, int y)
+        public float GetValue(float x, float y)
         {
             unchecked
             {
