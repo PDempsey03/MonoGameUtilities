@@ -1,8 +1,8 @@
 using Microsoft.Xna.Framework;
 using Mmc.MonoGame.Utils.Curves._2D;
-using Mmc.MonoGame.Utils.Curves._2D.Bezier;
 using Mmc.MonoGame.Utils.Curves._2D.Geometric;
 using Mmc.MonoGame.Utils.Curves._2D.Polynomial;
+using Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier;
 using System.Reflection;
 
 namespace Mmc.MonoGame.Utils.Tests;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Mmc.MonoGame.Utils.Curves._2D.Bezier
+namespace Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier
 {
     public class GenericBezierCurve2D : Curve2D
     {
