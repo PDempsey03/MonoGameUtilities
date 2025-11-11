@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Mmc.MonoGame.Utils.Noise;
 using ScottPlot;
 using ScottPlot.Colormaps;
@@ -35,7 +34,7 @@ public class NoiseTests
         var scatter = plt.Add.Scatter(x, y);
         scatter.MarkerSize = 0;
         plt.Title("1D Perlin Noise");
-        plt.XLabel("T");
+        plt.XLabel("X");
         plt.YLabel("Noise Value");
 
         Directory.CreateDirectory(OutputFolder);
@@ -51,8 +50,6 @@ public class NoiseTests
         const int Octaves = 12;
         const int ZoomFactor = 100;
 
-        const float FinalScalar = 2;
-
         var noise = new PerlinNoise(Seed, ZoomFactor, Octaves);
 
         const int SampleCountX = 1000;
@@ -64,7 +61,7 @@ public class NoiseTests
         {
             for (int j = 0; j < SampleCountY; j++)
             {
-                values[i, j] = MathHelper.Clamp(FinalScalar * noise.GetValue(i, j), -1, 1);
+                values[i, j] = noise.GetValue(i, j);
             }
         }
 
@@ -73,6 +70,71 @@ public class NoiseTests
         heatmap.Colormap = new Grayscale();
         heatmap.Smooth = true;
         plt.Title("2D Perlin Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestWhiteNoise1D()
+    {
+        const int Seed = 60;
+
+        var noise = new WhiteNoise(Seed);
+
+        const int SampleCount = 100;
+
+        double[] x = new double[SampleCount];
+        double[] y = new double[SampleCount];
+
+        for (int i = 0; i < SampleCount; i++)
+        {
+            x[i] = i;
+            y[i] = noise.GetValue(i, 1);
+        }
+
+        var plt = new Plot();
+        var scatter = plt.Add.Scatter(x, y);
+        scatter.MarkerSize = 0;
+        plt.Title("1D White Noise");
+        plt.XLabel("X");
+        plt.YLabel("Noise Value");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestWhiteNoise2D()
+    {
+        const int Seed = 50;
+
+        var noise = new WhiteNoise(Seed);
+
+        const int SampleCountX = 100;
+        const int SampleCountY = 100;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D White Noise");
         plt.XLabel("X");
         plt.YLabel("Y");
 
