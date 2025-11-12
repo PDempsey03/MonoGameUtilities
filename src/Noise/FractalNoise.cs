@@ -37,16 +37,5 @@
         {
             return baseNoiseValue * amplitude;
         }
-
-        // TODO: make these there own sub classes if it works out
-        protected virtual float SummingFunctionTurbulence(float baseNoiseValue, float amplitude, float frequency)
-        {
-            return MathF.Abs(baseNoiseValue) * amplitude;
-        }
-
-        protected virtual float SummingFunctionRidgid(float baseNoiseValue, float amplitude, float frequency)
-        {
-            return MathF.Pow(1 - MathF.Abs(baseNoiseValue), 2) * amplitude;
-        }
     }
 }

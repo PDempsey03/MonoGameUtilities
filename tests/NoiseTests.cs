@@ -317,4 +317,84 @@ public class NoiseTests
         plt.SavePng(path, 500, 500);
         Console.WriteLine($"Saved plot to {path}");
     }
+
+    [TestMethod]
+    public void TestRidgidFractalPerlinNoise2D()
+    {
+        const int Seed = 50;
+        const int PerlinOctaves = 12;
+        const int ZoomFactor = 100;
+
+        const int FractalOctaves = 6;
+        const float Lacunarity = 2;
+        const float Gain = .5f;
+
+        var noise = new RidgidFractalNoise(new PerlinNoise(Seed, ZoomFactor, PerlinOctaves), FractalOctaves, Lacunarity, Gain);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Ridgid Fractal Perlin Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestTurbulenceFractalPerlinNoise2D()
+    {
+        const int Seed = 50;
+        const int PerlinOctaves = 12;
+        const int ZoomFactor = 100;
+
+        const int FractalOctaves = 6;
+        const float Lacunarity = 2;
+        const float Gain = .5f;
+
+        var noise = new TurbulentFractalNoise(new PerlinNoise(Seed, ZoomFactor, PerlinOctaves), FractalOctaves, Lacunarity, Gain);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Turbulent Fractal Perlin Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
 }
