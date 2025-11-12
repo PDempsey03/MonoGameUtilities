@@ -1,4 +1,4 @@
-﻿namespace Mmc.MonoGame.Utils.Noise
+﻿namespace Mmc.MonoGame.Utils.Noise.Fractal
 {
     public class FractalNoise : INoise
     {
@@ -15,7 +15,7 @@
             Gain = gain;
         }
 
-        public float GetValue(float x, float y)
+        public virtual float GetValue(float x, float y)
         {
             float sum = 0f;
 

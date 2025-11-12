@@ -1,4 +1,4 @@
-﻿namespace Mmc.MonoGame.Utils.Noise
+﻿namespace Mmc.MonoGame.Utils.Noise.Fractal
 {
     public class RidgidFractalNoise : FractalNoise
     {
