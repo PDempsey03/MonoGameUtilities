@@ -1,4 +1,6 @@
+using Microsoft.Xna.Framework;
 using Mmc.MonoGame.Utils.Noise;
+using Mmc.MonoGame.Utils.Noise.Cellular;
 using Mmc.MonoGame.Utils.Noise.Fractal;
 using ScottPlot;
 using ScottPlot.Colormaps;
@@ -439,4 +441,255 @@ public class NoiseTests
         Console.WriteLine($"Saved plot to {path}");
     }
 
+    [TestMethod]
+    public void TestCellularNoise2D()
+    {
+        const int Seed = 24;
+        const int CellSize = 80;
+        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
+
+        var noise = new CellularNoise(Seed, CellSize, distanceMetric);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Cellular Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestSecondOrderCellularNoise2D()
+    {
+        const int Seed = 24;
+        const int CellSize = 80;
+        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
+
+        var noise = new SecondOrderCellularNoise(Seed, CellSize, distanceMetric);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Second Order Cellular Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestEdgeCellularNoise2D()
+    {
+        const int Seed = 24;
+        const int CellSize = 80;
+        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
+
+        var noise = new EdgeCellularNoise(Seed, CellSize, distanceMetric);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Edge Cellular Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestInvertedCellularNoise2D()
+    {
+        const int Seed = 24;
+        const int CellSize = 80;
+        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
+
+        var noise = new InvertedCellularNoise(Seed, CellSize, distanceMetric);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Inverted Cellular Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestBlendedCellularNoise2D()
+    {
+        const int Seed = 24;
+        const int CellSize = 80;
+        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
+
+        var noise = new BlendedCellularNoise(Seed, CellSize, distanceMetric);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Blended Cellular Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestMultiplicativeCellularNoise2D()
+    {
+        const int Seed = 24;
+        const int CellSize = 80;
+        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
+
+        var noise = new MultiplicativeCellularNoise(Seed, CellSize, distanceMetric);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Multiplicative Cellular Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestRatioCellularNoise2D()
+    {
+        const int Seed = 24;
+        const int CellSize = 80;
+        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
+
+        var noise = new RatioCellularNoise(Seed, CellSize, distanceMetric);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Ratio Cellular Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
 }
