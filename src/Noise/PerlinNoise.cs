@@ -3,13 +3,13 @@
 namespace Mmc.MonoGame.Utils.Noise
 {
     // Implementation based off https://www.youtube.com/watch?v=kCIaHqb60Cw
-    public class PerlinNoise
+    public class PerlinNoise : INoise
     {
-        private int Seed { get; set; }
+        private int Seed { get; init; }
 
-        private int ZoomFactor { get; set; }
+        private int ZoomFactor { get; init; }
 
-        private int Octaves { get; set; }
+        private int Octaves { get; init; }
 
         /// <summary>
         /// Construct Instance of Perlin Noise

@@ -1,10 +1,10 @@
 ﻿namespace Mmc.MonoGame.Utils.Noise
 {
-    public class BrownNoise
+    public class BrownNoise : INoise
     {
-        private WhiteNoise WhiteNoise { get; set; }
+        private WhiteNoise WhiteNoise { get; init; }
 
-        private int Octaves { get; set; }
+        private int Octaves { get; init; }
 
         public BrownNoise(int seed, int octaves)
         {

@@ -1,8 +1,8 @@
 ﻿namespace Mmc.MonoGame.Utils.Noise
 {
-    public class WhiteNoise
+    public class WhiteNoise : INoise
     {
-        private int Seed { get; set; }
+        private int Seed { get; init; }
 
         public WhiteNoise(int seed)
         {
