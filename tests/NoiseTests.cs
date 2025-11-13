@@ -692,4 +692,82 @@ public class NoiseTests
         plt.SavePng(path, 500, 500);
         Console.WriteLine($"Saved plot to {path}");
     }
+
+    [TestMethod]
+    public void TestBinnedGaussianNoise1D()
+    {
+        const int Seed = 76;
+        const float StandrdDeviationRange = 3;
+
+        var noise = new GaussianNoise(Seed, StandrdDeviationRange);
+
+        const int SampleCount = 100000;
+
+        // binning
+        double min = -1;
+        double max = 1;
+        double step = 0.1;
+        int binCount = (int)Math.Round((max - min) / step);
+        int[] counts = new int[binCount]; // how many values fall within the range of its bin
+        double[] centers = new double[binCount];
+
+        // calculate centers
+        for (int b = 0; b < binCount; b++)
+            centers[b] = min + (b + .5) * step;
+
+        // determine which bin each point will go in
+        for (int i = 0; i < SampleCount; i++)
+        {
+            float val = noise.GetValue(i, 1);
+            int bin = (int)Math.Floor((val - min) / step);
+            if (bin >= 0 && bin < binCount)
+                counts[bin]++;
+        }
+
+        var plt = new Plot();
+        plt.Add.Scatter(centers, counts.Select(c => (double)c).ToArray());
+        plt.Title("1D Gaussian Noise Bin Counts");
+        plt.XLabel("Bins");
+        plt.YLabel("Noise Counts");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestGaussianNoise2D()
+    {
+        const int Seed = 94;
+
+        var noise = new GaussianNoise(Seed);
+
+        const int SampleCountX = 100;
+        const int SampleCountY = 100;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+                Console.WriteLine(values[i, j]);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D Gaussian Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
 }
