@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Mmc.MonoGame.Utils.Noise;
 using Mmc.MonoGame.Utils.Noise.Cellular;
 using Mmc.MonoGame.Utils.Noise.Fractal;
+using Mmc.MonoGame.Utils.Tests.ColorMaps;
 using ScottPlot;
 using ScottPlot.Colormaps;
 using System.Reflection;
@@ -762,6 +763,122 @@ public class NoiseTests
         heatmap.Colormap = new Grayscale();
         heatmap.Smooth = true;
         plt.Title("2D Gaussian Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestOpenSimplexNoise2D()
+    {
+        const int Seed = 50;
+        const float ZoomFactor = 100f;
+        const int Octaves = 12;
+
+        var noise = new OpenSimplexNoise(Seed, ZoomFactor, Octaves);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new Grayscale();
+        heatmap.Smooth = true;
+        plt.Title("2D OpenSimplex Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestOpenSimplexNoise2DToTerrainMap()
+    {
+        const int Seed = 50;
+        const float ZoomFactor = 100f;
+        const int Octaves = 4;
+
+        var noise = new OpenSimplexNoise(Seed, ZoomFactor, Octaves);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j) * 128;
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+
+        const double WaterCutoff = 0;
+        const double LandCutoff = 20;
+
+        heatmap.Colormap = new BasicTerrainColorMap(WaterCutoff, LandCutoff);
+        heatmap.Smooth = true;
+        plt.Title("2D OpenSimplex Noise Terrain");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestPerlinNoise2DToTerrainMap()
+    {
+        const int Seed = 50;
+        const int ZoomFactor = 100;
+        const int Octaves = 12;
+
+        var noise = new PerlinNoise(Seed, ZoomFactor, Octaves);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j) * 128;
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+
+        const double WaterCutoff = 0;
+        const double LandCutoff = 10;
+
+        heatmap.Colormap = new BasicTerrainColorMap(WaterCutoff, LandCutoff);
+        heatmap.Smooth = true;
+        plt.Title("2D Perlin Noise Terrain");
         plt.XLabel("X");
         plt.YLabel("Y");
 
