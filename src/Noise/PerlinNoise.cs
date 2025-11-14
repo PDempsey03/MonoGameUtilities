@@ -11,17 +11,25 @@ namespace Mmc.MonoGame.Utils.Noise
 
         private int Octaves { get; init; }
 
+        private float Lacunarity { get; init; }
+
+        private float Gain { get; init; }
+
         /// <summary>
         /// Construct Instance of Perlin Noise
         /// </summary>
         /// <param name="seed">Defines the random seed used when generating the perlin noise</param>
         /// <param name="zoomFactor">Defines how zoomed in on the perlin noise the output will be. (100-400 is a good starting range)</param>
         /// <param name="octaves">Defines the granularity of the perlin noise. Higher values result in more detail. (4-12 is a good starting range)</param>
-        public PerlinNoise(int seed, int zoomFactor, int octaves)
+        /// <param name="lacunarity">Defines how the frequency scales with subsequent octaves.</param>
+        /// <param name="gain">Defines how the amplitude scales with subsequent octaves.</param>
+        public PerlinNoise(int seed, int zoomFactor = 100, int octaves = 1, float lacunarity = 2, float gain = .5f)
         {
             Seed = seed;
             ZoomFactor = zoomFactor;
             Octaves = octaves;
+            Lacunarity = lacunarity;
+            Gain = gain;
         }
 
         public float GetValue(float x, float y)
@@ -35,8 +43,8 @@ namespace Mmc.MonoGame.Utils.Noise
             {
                 val += InternalPerlinOnOctave(x * frequency / ZoomFactor, y * frequency / ZoomFactor) * amplitude;
 
-                frequency *= 2;
-                amplitude /= 2;
+                frequency *= Lacunarity;
+                amplitude *= Gain;
             }
 
             return MathHelper.Clamp(val, -1, 1);
@@ -112,8 +120,7 @@ namespace Mmc.MonoGame.Utils.Noise
 
         private static float CubicInterpolation(float a0, float a1, float w)
         {
-            float temp = (a1 - a0) * (3f - w * 2f) * w * w + a0;
-            return temp;
+            return (a1 - a0) * (3f - w * 2f) * w * w + a0;
         }
     }
 }
