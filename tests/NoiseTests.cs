@@ -2,9 +2,9 @@ using Microsoft.Xna.Framework;
 using Mmc.MonoGame.Utils.Noise;
 using Mmc.MonoGame.Utils.Noise.Cellular;
 using Mmc.MonoGame.Utils.Noise.Fractal;
+using Mmc.MonoGame.Utils.Noise.Transforms;
 using Mmc.MonoGame.Utils.Tests.ColorMaps;
 using ScottPlot;
-using ScottPlot.Colormaps;
 using System.Reflection;
 
 namespace Mmc.MonoGame.Utils.Tests;
@@ -71,7 +71,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Perlin Noise");
         plt.XLabel("X");
@@ -136,7 +136,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D White Noise");
         plt.XLabel("X");
@@ -203,7 +203,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Pink Noise");
         plt.XLabel("X");
@@ -270,7 +270,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Brown Noise");
         plt.XLabel("X");
@@ -310,7 +310,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Fractal Perlin Noise");
         plt.XLabel("X");
@@ -350,7 +350,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Ridgid Fractal Perlin Noise");
         plt.XLabel("X");
@@ -390,7 +390,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Turbulent Fractal Perlin Noise");
         plt.XLabel("X");
@@ -430,7 +430,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Billow Fractal Perlin Noise");
         plt.XLabel("X");
@@ -466,7 +466,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Cellular Noise");
         plt.XLabel("X");
@@ -502,7 +502,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Second Order Cellular Noise");
         plt.XLabel("X");
@@ -538,7 +538,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Edge Cellular Noise");
         plt.XLabel("X");
@@ -574,7 +574,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Inverted Cellular Noise");
         plt.XLabel("X");
@@ -610,7 +610,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Blended Cellular Noise");
         plt.XLabel("X");
@@ -646,7 +646,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Multiplicative Cellular Noise");
         plt.XLabel("X");
@@ -682,7 +682,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Ratio Cellular Noise");
         plt.XLabel("X");
@@ -760,7 +760,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D Gaussian Noise");
         plt.XLabel("X");
@@ -796,7 +796,7 @@ public class NoiseTests
 
         var plt = new Plot();
         var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new Grayscale();
+        heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D OpenSimplex Noise");
         plt.XLabel("X");
