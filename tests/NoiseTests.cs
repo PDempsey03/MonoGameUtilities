@@ -887,4 +887,51 @@ public class NoiseTests
         plt.SavePng(path, 500, 500);
         Console.WriteLine($"Saved plot to {path}");
     }
+
+    [TestMethod]
+    public void TestDyanmicDomainRotationOpenSimplexNoise2DToTerrainMap()
+    {
+        const int Seed = 50;
+        const int ZoomFactor = 100;
+        const int Octaves = 4;
+
+        var baseNoise = new OpenSimplexNoise(Seed, ZoomFactor, Octaves);
+
+        const int Seed2 = 34;
+        const int ZoomFactor2 = 100;
+        const int Octaves2 = 4;
+        var rotationNoise = new PerlinNoise(Seed2, ZoomFactor2, Octaves2);
+
+        const float MaxRotationAngleRadians = MathF.PI / 2;
+        var noise = new DynamicDomainRotateNoise(baseNoise, rotationNoise, MaxRotationAngleRadians);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j) * 128;
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        const double WaterCutoff = 0;
+        const double LandCutoff = 10;
+
+        heatmap.Colormap = new BasicTerrainColorMap(WaterCutoff, LandCutoff);
+        heatmap.Smooth = true;
+        plt.Title("2D Dyanmic Domain Rotation Perlin Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
 }
