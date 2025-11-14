@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
 using Mmc.MonoGame.Utils.Curves._2D;
 using Mmc.MonoGame.Utils.Curves._2D.Geometric;
+using Mmc.MonoGame.Utils.Curves._2D.Noise;
 using Mmc.MonoGame.Utils.Curves._2D.Polynomial;
 using Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier;
+using Mmc.MonoGame.Utils.Noise;
 using System.Reflection;
 
 namespace Mmc.MonoGame.Utils.Tests;
@@ -367,6 +369,48 @@ public class CurveTests
             SamplePoints = 200,
             FileName = $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png",
             UseEvenlySpacedPoints = true,
+        };
+
+        Curve2DVisualizer.VisualizeCurve(settings);
+    }
+
+    [TestMethod]
+    public void TestCircularOpenSimplexNoiseCurve2DWithNormals()
+    {
+        CircularCurve2D baseCurve = new CircularCurve2D(Vector2.Zero, 5, 0, 360);
+
+        OpenSimplexNoise noise = new OpenSimplexNoise(294, 10, 4);
+
+        NoiseCurve2D test = new NoiseCurve2D(baseCurve, noise, 3);
+
+        Curve2DVisualizationSettings settings = new Curve2DVisualizationSettings()
+        {
+            Curve = test,
+            SamplePoints = 200,
+            FileName = $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png",
+            ShowNormals = true,
+            MarkerSize = 0
+        };
+
+        Curve2DVisualizer.VisualizeCurve(settings);
+    }
+
+    [TestMethod]
+    public void TestCubicBezierOpenSimplexNoiseCurve2DWithNormals()
+    {
+        CubicBezierCurve2D baseCurve = new CubicBezierCurve2D(new Vector2(0, 0), new Vector2(10, 4), new Vector2(0, -8), new Vector2(-6, 0));
+
+        OpenSimplexNoise noise = new OpenSimplexNoise(26, 10, 4);
+
+        NoiseCurve2D test = new NoiseCurve2D(baseCurve, noise, 2);
+
+        Curve2DVisualizationSettings settings = new Curve2DVisualizationSettings()
+        {
+            Curve = test,
+            SamplePoints = 50,
+            FileName = $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png",
+            MarkerSize = 0,
+            ShowNormals = true
         };
 
         Curve2DVisualizer.VisualizeCurve(settings);
