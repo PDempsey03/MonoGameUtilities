@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 
-namespace Mmc.MonoGame.Utils.Noise
+namespace Mmc.MonoGame.Utils.Noise.ColoredNoise
 {
     /// <summary>
     /// Gaussian noise is similar to white noise but instead of the values being uniformly distributed on [0,1],
@@ -23,15 +23,15 @@ namespace Mmc.MonoGame.Utils.Noise
             unchecked
             {
                 uint n = (uint)(x + y * 57 + Seed * 131);
-                n = (n << 13) ^ n;
-                uint t = (n * (n * n * 15731 + 789221) + 1376312589);
-                float n1 = 1.0f - ((t & 0x7fffffff) / 1073741824f); // [-1,1]
+                n = n << 13 ^ n;
+                uint t = n * (n * n * 15731 + 789221) + 1376312589;
+                float n1 = 1.0f - (t & 0x7fffffff) / 1073741824f; // [-1,1]
                 float u1 = (n1 + 1) / 2f; // [0,1]
 
                 n = (uint)(x + y * 67 + Seed * 128);
-                n = (n << 13) ^ n;
-                t = (n * (n * n * 19478 + 105787) + 1837561937);
-                float n2 = 1.0f - ((t & 0x7fffffff) / 1073741824f); // [-1,1]
+                n = n << 13 ^ n;
+                t = n * (n * n * 19478 + 105787) + 1837561937;
+                float n2 = 1.0f - (t & 0x7fffffff) / 1073741824f; // [-1,1]
                 float u2 = (n2 + 1) / 2f; // [0,1]
 
 

@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Mmc.MonoGame.Utils.Noise;
 using Mmc.MonoGame.Utils.Noise.Cellular;
+using Mmc.MonoGame.Utils.Noise.ColoredNoise;
 using Mmc.MonoGame.Utils.Noise.Fractal;
 using Mmc.MonoGame.Utils.Noise.Transforms;
 using Mmc.MonoGame.Utils.Tests.ColorMaps;
