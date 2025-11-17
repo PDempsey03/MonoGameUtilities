@@ -696,12 +696,12 @@ public class NoiseTests
     }
 
     [TestMethod]
-    public void TestBinnedGaussianNoise1D()
+    public void TestBinnedGaussianWhiteNoise1D()
     {
         const int Seed = 76;
         const float StandrdDeviationRange = 3;
 
-        var noise = new GaussianNoise(Seed, StandrdDeviationRange);
+        var noise = new GaussianWhiteNoise(Seed, StandrdDeviationRange);
 
         const int SampleCount = 100000;
 
@@ -728,7 +728,7 @@ public class NoiseTests
 
         var plt = new Plot();
         plt.Add.Scatter(centers, counts.Select(c => (double)c).ToArray());
-        plt.Title("1D Gaussian Noise Bin Counts");
+        plt.Title("1D Gaussian NWhite oise Bin Counts");
         plt.XLabel("Bins");
         plt.YLabel("Noise Counts");
 
@@ -739,11 +739,11 @@ public class NoiseTests
     }
 
     [TestMethod]
-    public void TestGaussianNoise2D()
+    public void TestGaussianWhiteNoise2D()
     {
         const int Seed = 94;
 
-        var noise = new GaussianNoise(Seed);
+        var noise = new GaussianWhiteNoise(Seed);
 
         const int SampleCountX = 100;
         const int SampleCountY = 100;
@@ -763,7 +763,7 @@ public class NoiseTests
         var heatmap = plt.Add.Heatmap(values);
         heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
-        plt.Title("2D Gaussian Noise");
+        plt.Title("2D Gaussian White Noise");
         plt.XLabel("X");
         plt.YLabel("Y");
 

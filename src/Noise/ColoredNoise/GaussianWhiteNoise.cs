@@ -6,13 +6,13 @@ namespace Mmc.MonoGame.Utils.Noise.ColoredNoise
     /// Gaussian noise is similar to white noise but instead of the values being uniformly distributed on [0,1],
     /// they are normally distributed on [0,1]
     /// </summary>
-    public class GaussianNoise : INoise
+    public class GaussianWhiteNoise : INoise
     {
         private int Seed { get; init; }
 
         private float StandardDeviationRange { get; init; }
 
-        public GaussianNoise(int seed, float standardDevationRange = 3)
+        public GaussianWhiteNoise(int seed, float standardDevationRange = 3)
         {
             Seed = seed;
             StandardDeviationRange = standardDevationRange;
