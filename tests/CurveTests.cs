@@ -3,6 +3,7 @@ using Mmc.MonoGame.Utils.Curves._2D;
 using Mmc.MonoGame.Utils.Curves._2D.Geometric;
 using Mmc.MonoGame.Utils.Curves._2D.Noise;
 using Mmc.MonoGame.Utils.Curves._2D.Polynomial;
+using Mmc.MonoGame.Utils.Curves._2D.Splines;
 using Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier;
 using Mmc.MonoGame.Utils.Noise;
 using System.Reflection;
@@ -411,6 +412,45 @@ public class CurveTests
             FileName = $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png",
             MarkerSize = 0,
             ShowNormals = true
+        };
+
+        Curve2DVisualizer.VisualizeCurve(settings);
+    }
+
+    [TestMethod]
+    public void TestCubicHermiteSplineCurve2DWithNormals()
+    {
+        Vector2[] points = [new(1, 2), new(3, 5), new(6, 7)];
+        Vector2[] tangents = [new(2, 2), new(4, -4), new(2, 4)];
+
+        CubicHermiteSplineCurve2D test = new CubicHermiteSplineCurve2D(points, tangents);
+
+        Curve2DVisualizationSettings settings = new Curve2DVisualizationSettings()
+        {
+            Curve = test,
+            SamplePoints = 30,
+            FileName = $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png",
+            MarkerSize = 0,
+            ShowNormals = true,
+        };
+
+        Curve2DVisualizer.VisualizeCurve(settings);
+    }
+
+    [TestMethod]
+    public void TestEvenlySpacedCubicHermiteSplineCurve2DWithNoTangents()
+    {
+        Vector2[] points = [new(1, 2), new(3, 5), new(6, 1), new(7, 9), new(5, 7), new(3, 9)];
+        Vector2[] tangents = [];
+
+        CubicHermiteSplineCurve2D test = new CubicHermiteSplineCurve2D(points, tangents);
+
+        Curve2DVisualizationSettings settings = new Curve2DVisualizationSettings()
+        {
+            Curve = test,
+            SamplePoints = 200,
+            FileName = $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png",
+            UseEvenlySpacedPoints = true
         };
 
         Curve2DVisualizer.VisualizeCurve(settings);
