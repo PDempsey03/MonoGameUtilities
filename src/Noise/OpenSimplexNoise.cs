@@ -4,45 +4,23 @@ namespace Mmc.MonoGame.Utils.Noise
 {
     public class OpenSimplexNoise : INoise
     {
-        private int Seed { get; init; }
+        private const float EmpiricalScalingConstant = 70f / (1.41421356237f / 2f);
+
+        private PseudoRandom PseudoRandom { get; init; }
 
         private float ZoomFactor { get; init; }
 
-        private int Octaves { get; init; }
-
-        private float Lacunarity { get; init; }
-
-        private float Gain { get; init; }
-
-        public OpenSimplexNoise(int seed, float zoomFactor = 100, int octaves = 1, float lacunarity = 2, float gain = .5f)
+        public OpenSimplexNoise(int seed, float zoomFactor = 100)
         {
-            Seed = seed;
+            PseudoRandom = new PseudoRandom(seed);
             ZoomFactor = zoomFactor;
-            Octaves = octaves;
-            Lacunarity = lacunarity;
-            Gain = gain;
         }
 
         public float GetValue(float x, float y)
         {
-            float val = 0;
+            x /= ZoomFactor;
+            y /= ZoomFactor;
 
-            float frequency = 1;
-            float amplitude = 1;
-
-            for (int o = 0; o < Octaves; o++)
-            {
-                val += InternalOpenSimplexOnOctave(x * frequency / ZoomFactor, y * frequency / ZoomFactor) * amplitude;
-
-                frequency *= Lacunarity;
-                amplitude *= Gain;
-            }
-
-            return MathHelper.Clamp(val, -1, 1);
-        }
-
-        private float InternalOpenSimplexOnOctave(float x, float y)
-        {
             // skewing factors for triangular space
             const float F2 = 0.366025403f; // (sqrt(3)-1)/2
             const float G2 = 0.211324865f; // (3-sqrt(3))/6
@@ -88,7 +66,7 @@ namespace Mmc.MonoGame.Utils.Noise
             float n2 = CornerContribution(i + 1, j + 1, x2, y2);
 
             // Scale result to [-1,1]
-            return MathHelper.Clamp(70.0f * (n0 + n1 + n2), -1f, 1f);
+            return MathHelper.Clamp(EmpiricalScalingConstant * (n0 + n1 + n2), -1f, 1f);
         }
 
         private float CornerContribution(int i, int j, float x, float y)
@@ -102,31 +80,11 @@ namespace Mmc.MonoGame.Utils.Noise
             t *= t;
 
             // get the gradient at the corner
-            var grad = RandomGradient(i, j);
+            float angle = PseudoRandom.GetRandomValueInRange(0, MathF.Tau, i, j);
+            var grad = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
 
             // return dot product with t^2 as a smoothness since interpolation isn't done anywhere else
             return t * t * (grad.X * x + grad.Y * y);
-        }
-
-        private Vector2 RandomGradient(int ix, int iy)
-        {
-            unchecked
-            {
-                uint a = (uint)(ix + Seed * 334875276);
-                uint b = (uint)(iy + Seed * 690875635);
-
-                const int w = 32;
-                const int s = 16;
-
-                a *= 3284157443u;
-                b ^= (a << s) | (a >> (w - s));
-                b *= 1911520717u;
-                a ^= (b << s) | (b >> (w - s));
-                a *= 2048419325u;
-
-                float angle = (a & 0x7FFFFFFF) / (float)int.MaxValue * MathF.Tau;
-                return new Vector2(MathF.Cos(angle), MathF.Sin(angle));
-            }
         }
 
         private static int IntegerFloor(float x)

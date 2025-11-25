@@ -7,6 +7,11 @@
 
         }
 
+        public RidgidFractalNoise(INoise baseNoise) : base(baseNoise)
+        {
+
+        }
+
         protected override float SummingFunction(float baseNoiseValue, float amplitude, float frequency)
         {
             return MathF.Pow(1 - MathF.Abs(baseNoiseValue), 2) * amplitude;

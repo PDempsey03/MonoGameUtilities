@@ -5,53 +5,28 @@ namespace Mmc.MonoGame.Utils.Noise
     // Implementation based off https://www.youtube.com/watch?v=kCIaHqb60Cw
     public class PerlinNoise : INoise
     {
-        private int Seed { get; init; }
+        private const float EmpiricalScalingConstant = 1 / .63f;
+
+        private PseudoRandom PseudoRandom { get; init; }
 
         private int ZoomFactor { get; init; }
-
-        private int Octaves { get; init; }
-
-        private float Lacunarity { get; init; }
-
-        private float Gain { get; init; }
 
         /// <summary>
         /// Construct Instance of Perlin Noise
         /// </summary>
         /// <param name="seed">Defines the random seed used when generating the perlin noise</param>
         /// <param name="zoomFactor">Defines how zoomed in on the perlin noise the output will be. (100-400 is a good starting range)</param>
-        /// <param name="octaves">Defines the granularity of the perlin noise. Higher values result in more detail. (4-12 is a good starting range)</param>
-        /// <param name="lacunarity">Defines how the frequency scales with subsequent octaves.</param>
-        /// <param name="gain">Defines how the amplitude scales with subsequent octaves.</param>
-        public PerlinNoise(int seed, int zoomFactor = 100, int octaves = 1, float lacunarity = 2, float gain = .5f)
+        public PerlinNoise(int seed, int zoomFactor = 100)
         {
-            Seed = seed;
+            PseudoRandom = new PseudoRandom(seed);
             ZoomFactor = zoomFactor;
-            Octaves = octaves;
-            Lacunarity = lacunarity;
-            Gain = gain;
         }
 
         public float GetValue(float x, float y)
         {
-            float val = 0;
+            x /= ZoomFactor;
+            y /= ZoomFactor;
 
-            float frequency = 1;
-            float amplitude = 1;
-
-            for (int o = 0; o < Octaves; o++)
-            {
-                val += InternalPerlinOnOctave(x * frequency / ZoomFactor, y * frequency / ZoomFactor) * amplitude;
-
-                frequency *= Lacunarity;
-                amplitude *= Gain;
-            }
-
-            return MathHelper.Clamp(val, -1, 1);
-        }
-
-        private float InternalPerlinOnOctave(float x, float y)
-        {
             // grid cell corner positions
             int x0 = (int)x;
             int y0 = (int)y;
@@ -59,21 +34,23 @@ namespace Mmc.MonoGame.Utils.Noise
             int y1 = y0 + 1;
 
             // interpolation weights
-            float sx = x - x0;
-            float sy = y - y0;
+            float sx = Fade(x - x0);
+            float sy = Fade(y - y0);
 
             // compute and interpolate top two corners
             float n0 = DotGridGradient(x0, y0, x, y);
             float n1 = DotGridGradient(x1, y0, x, y);
-            float ix0 = CubicInterpolation(n0, n1, sx);
+            float ix0 = MathHelper.Lerp(n0, n1, sx);
 
             // compute and interpolate bottom two corners
             n0 = DotGridGradient(x0, y1, x, y);
             n1 = DotGridGradient(x1, y1, x, y);
-            float ix1 = CubicInterpolation(n0, n1, sx);
+            float ix1 = MathHelper.Lerp(n0, n1, sx);
+
+            float unscaledResult = MathHelper.Lerp(ix0, ix1, sy);
 
             // interpolate previously interpolated horizontal values vertically to get answer
-            float result = CubicInterpolation(ix0, ix1, sy);
+            float result = MathHelper.Clamp(EmpiricalScalingConstant * unscaledResult, -1, 1);
 
             return result;
         }
@@ -81,46 +58,22 @@ namespace Mmc.MonoGame.Utils.Noise
         private float DotGridGradient(int ix, int iy, float x, float y)
         {
             // get gradient at the provided integer coordinates
-            Vector2 gradient = RandomGradient(ix, iy);
+            float angle = PseudoRandom.GetRandomValueInRange(0, MathF.Tau, ix, iy);
+            Vector2 gradient = new Vector2(MathF.Cos(angle), MathF.Sin(angle));
 
             // compute distance vector
             float dx = x - ix;
             float dy = y - iy;
 
-            // compute dot product
-            return (dx * gradient.X + dy * gradient.Y);
+            // compute dot product [-sqrt(2), sqrt(2)]
+            float dotProduct = (dx * gradient.X + dy * gradient.Y);
+
+            return dotProduct;
         }
 
-        private Vector2 RandomGradient(int ix, int iy)
+        private static float Fade(float t)
         {
-            // unchecked as we desire overflow
-            unchecked
-            {
-                const int w = 8 * sizeof(uint);
-                const int s = w / 2;
-
-                uint a = (uint)(ix + Seed * 334875276);
-                uint b = (uint)(iy + Seed * 690875635);
-
-                a *= 3284157443u;
-
-                b ^= (a << s) | (a >> (w - s));
-                b *= 1911520717u;
-
-                a ^= (b << s) | (b >> (w - s));
-                a *= 2048419325u;
-
-                const float invIntMax = 1f / int.MaxValue;
-
-                float angle = (a & 0x7FFFFFFF) * (MathF.Tau * invIntMax);
-
-                return new Vector2(MathF.Sin(angle), MathF.Cos(angle));
-            }
-        }
-
-        private static float CubicInterpolation(float a0, float a1, float w)
-        {
-            return (a1 - a0) * (3f - w * 2f) * w * w + a0;
+            return ((6 * t - 15) * t + 10) * t * t * t;
         }
     }
 }

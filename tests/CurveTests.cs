@@ -6,6 +6,7 @@ using Mmc.MonoGame.Utils.Curves._2D.Polynomial;
 using Mmc.MonoGame.Utils.Curves._2D.Splines;
 using Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier;
 using Mmc.MonoGame.Utils.Noise;
+using Mmc.MonoGame.Utils.Noise.Fractal;
 using System.Reflection;
 
 namespace Mmc.MonoGame.Utils.Tests;
@@ -380,7 +381,7 @@ public class CurveTests
     {
         CircularCurve2D baseCurve = new CircularCurve2D(Vector2.Zero, 5, 0, 360);
 
-        OpenSimplexNoise noise = new OpenSimplexNoise(294, 10, 4);
+        FractalNoise noise = new FractalNoise(new OpenSimplexNoise(294, 10), 4);
 
         NoiseCurve2D test = new NoiseCurve2D(baseCurve, noise, 3);
 
@@ -401,7 +402,7 @@ public class CurveTests
     {
         CubicBezierCurve2D baseCurve = new CubicBezierCurve2D(new Vector2(0, 0), new Vector2(10, 4), new Vector2(0, -8), new Vector2(-6, 0));
 
-        OpenSimplexNoise noise = new OpenSimplexNoise(26, 10, 4);
+        FractalNoise noise = new FractalNoise(new OpenSimplexNoise(26, 10), 4);
 
         NoiseCurve2D test = new NoiseCurve2D(baseCurve, noise, 2);
 

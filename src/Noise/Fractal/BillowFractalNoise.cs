@@ -7,6 +7,11 @@
 
         }
 
+        public BillowFractalNoise(INoise baseNoise) : base(baseNoise)
+        {
+
+        }
+
         protected override float SummingFunction(float baseNoiseValue, float amplitude, float frequency)
         {
             return (2 * MathF.Abs(baseNoiseValue) - 1) * amplitude;

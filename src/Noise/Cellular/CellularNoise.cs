@@ -4,7 +4,7 @@ namespace Mmc.MonoGame.Utils.Noise.Cellular
 {
     public class CellularNoise : INoise
     {
-        protected int Seed { get; init; }
+        protected PseudoRandom PseudoRandom { get; init; }
 
         protected float CellSize { get; init; }
 
@@ -12,7 +12,7 @@ namespace Mmc.MonoGame.Utils.Noise.Cellular
 
         public CellularNoise(int seed, float cellSize = 1, Func<Vector2, Vector2, float>? distanceMetric = null)
         {
-            Seed = seed;
+            PseudoRandom = new PseudoRandom(seed);
             CellSize = cellSize;
             DistanceMetric = distanceMetric ?? Vector2.Distance;
         }
@@ -38,7 +38,9 @@ namespace Mmc.MonoGame.Utils.Noise.Cellular
                     int cx = xi + dx;
                     int cy = yi + dy;
 
-                    Vector2 pointInC = RandomPointInCell(cx, cy);
+                    float xOffset = PseudoRandom.GetRandomValue(cx, cy, 1);
+                    float yOffset = PseudoRandom.GetRandomValue(cx, cy, 2);
+                    Vector2 pointInC = new Vector2(cx + xOffset, cy + yOffset);
 
                     float newDistance = DistanceMetric(pointInC, givenPoint);
 
@@ -60,22 +62,6 @@ namespace Mmc.MonoGame.Utils.Noise.Cellular
         protected virtual float CalculateReturnValue(float minDistance1, float minDistance2)
         {
             return minDistance1;
-        }
-
-        private Vector2 RandomPointInCell(int cx, int cy)
-        {
-            // unchecked as we desire overflow
-            unchecked
-            {
-                int h = cx;
-                h = h * 374761393 ^ cy * 668265263;
-                h = (h ^ Seed * 1446649773) * 1274126177;
-                h ^= h >> 13;
-
-                float rx = (h & 0xFF) / 255f; // use last 8 bits
-                float ry = (h >> 8 & 0xFF) / 255f; // use next 8 bits
-                return new Vector2(cx + rx, cy + ry);
-            }
         }
     }
 }

@@ -7,6 +7,11 @@
 
         }
 
+        public TurbulentFractalNoise(INoise baseNoise) : base(baseNoise)
+        {
+
+        }
+
         protected override float SummingFunction(float baseNoiseValue, float amplitude, float frequency)
         {
             return MathF.Abs(baseNoiseValue) * amplitude;

@@ -1,11 +1,16 @@
-﻿namespace Mmc.MonoGame.Utils.Noise.Fractal
+﻿using Microsoft.Xna.Framework;
+
+namespace Mmc.MonoGame.Utils.Noise.Fractal
 {
     public class FractalNoise : INoise
     {
-        private INoise BaseNoise { get; init; }
-        private int Octaves { get; init; }
-        private float Lacunarity { get; init; }
-        private float Gain { get; init; }
+        protected INoise BaseNoise { get; init; }
+
+        protected int Octaves { get; init; }
+
+        protected float Lacunarity { get; init; }
+
+        protected float Gain { get; init; }
 
         public FractalNoise(INoise baseNoise, int octaves = 6, float lacunarity = 2f, float gain = 0.5f)
         {
@@ -24,13 +29,13 @@
 
             for (int i = 0; i < Octaves; i++)
             {
-                sum += SummingFunction(BaseNoise.GetValue(x * frequency, y * frequency), amplitude, frequency);
+                var baseNoiseValue = BaseNoise.GetValue(x * frequency, y * frequency);
+                sum += SummingFunction(baseNoiseValue, amplitude, frequency);
 
                 frequency *= Lacunarity;
                 amplitude *= Gain;
             }
-
-            return sum;
+            return MathHelper.Clamp(sum, -1, 1);
         }
 
         protected virtual float SummingFunction(float baseNoiseValue, float amplitude, float frequency)

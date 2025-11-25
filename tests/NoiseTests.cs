@@ -21,10 +21,9 @@ public class NoiseTests
         const int SampleCount = 1000;
 
         const int Seed = 50;
-        const int Octaves = 12;
         const int ZoomFactor = 100;
 
-        var noise = new PerlinNoise(Seed, ZoomFactor, Octaves);
+        var noise = new PerlinNoise(Seed, ZoomFactor);
 
         double[] x = new double[SampleCount];
         double[] y = new double[SampleCount];
@@ -52,10 +51,9 @@ public class NoiseTests
     public void TestPerlinNoise2D()
     {
         const int Seed = 50;
-        const int Octaves = 12;
         const int ZoomFactor = 100;
 
-        var noise = new PerlinNoise(Seed, ZoomFactor, Octaves);
+        var noise = new PerlinNoise(Seed, ZoomFactor);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -287,14 +285,13 @@ public class NoiseTests
     public void TestFractalPerlinNoise2D()
     {
         const int Seed = 50;
-        const int PerlinOctaves = 12;
         const int ZoomFactor = 100;
 
-        const int FractalOctaves = 6;
+        const int Octaves = 6;
         const float Lacunarity = 2;
         const float Gain = .5f;
 
-        var noise = new FractalNoise(new PerlinNoise(Seed, ZoomFactor, PerlinOctaves), FractalOctaves, Lacunarity, Gain);
+        var noise = new FractalNoise(new PerlinNoise(Seed, ZoomFactor), Octaves, Lacunarity, Gain);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -327,14 +324,13 @@ public class NoiseTests
     public void TestRidgidFractalPerlinNoise2D()
     {
         const int Seed = 50;
-        const int PerlinOctaves = 12;
         const int ZoomFactor = 100;
 
-        const int FractalOctaves = 6;
+        const int Octaves = 6;
         const float Lacunarity = 2;
         const float Gain = .5f;
 
-        var noise = new RidgidFractalNoise(new PerlinNoise(Seed, ZoomFactor, PerlinOctaves), FractalOctaves, Lacunarity, Gain);
+        var noise = new RidgidFractalNoise(new PerlinNoise(Seed, ZoomFactor), Octaves, Lacunarity, Gain);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -367,14 +363,13 @@ public class NoiseTests
     public void TestTurbulenceFractalPerlinNoise2D()
     {
         const int Seed = 50;
-        const int PerlinOctaves = 12;
         const int ZoomFactor = 100;
 
-        const int FractalOctaves = 6;
+        const int Octaves = 6;
         const float Lacunarity = 2;
         const float Gain = .5f;
 
-        var noise = new TurbulentFractalNoise(new PerlinNoise(Seed, ZoomFactor, PerlinOctaves), FractalOctaves, Lacunarity, Gain);
+        var noise = new TurbulentFractalNoise(new PerlinNoise(Seed, ZoomFactor), Octaves, Lacunarity, Gain);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -407,14 +402,13 @@ public class NoiseTests
     public void TestBillowFractalPerlinNoise2D()
     {
         const int Seed = 50;
-        const int PerlinOctaves = 12;
         const int ZoomFactor = 100;
 
-        const int FractalOctaves = 6;
+        const int Octaves = 6;
         const float Lacunarity = 2;
         const float Gain = .5f;
 
-        var noise = new BillowFractalNoise(new PerlinNoise(Seed, ZoomFactor, PerlinOctaves), FractalOctaves, Lacunarity, Gain);
+        var noise = new BillowFractalNoise(new PerlinNoise(Seed, ZoomFactor), Octaves, Lacunarity, Gain);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -778,9 +772,8 @@ public class NoiseTests
     {
         const int Seed = 50;
         const float ZoomFactor = 100f;
-        const int Octaves = 12;
 
-        var noise = new OpenSimplexNoise(Seed, ZoomFactor, Octaves);
+        var noise = new OpenSimplexNoise(Seed, ZoomFactor);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -810,13 +803,51 @@ public class NoiseTests
     }
 
     [TestMethod]
-    public void TestOpenSimplexNoise2DToTerrainMap()
+    public void TestFractalOpenSimplexNoise2D()
+    {
+        const int Seed = 50;
+        const float ZoomFactor = 100f;
+        const int Octaves = 6;
+
+        var baseNoise = new OpenSimplexNoise(Seed, ZoomFactor);
+        var noise = new FractalNoise(baseNoise, Octaves);
+
+        const int SampleCountX = 1000;
+        const int SampleCountY = 1000;
+
+        double[,] values = new double[SampleCountX, SampleCountY];
+
+        for (int i = 0; i < SampleCountX; i++)
+        {
+            for (int j = 0; j < SampleCountY; j++)
+            {
+                values[i, j] = noise.GetValue(i, j);
+            }
+        }
+
+        var plt = new Plot();
+        var heatmap = plt.Add.Heatmap(values);
+        heatmap.Colormap = new NoiseGrayScale();
+        heatmap.Smooth = true;
+        plt.Title("2D Fractal OpenSimplex Noise");
+        plt.XLabel("X");
+        plt.YLabel("Y");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
+    }
+
+    [TestMethod]
+    public void TestFractalOpenSimplexNoise2DToTerrainMap()
     {
         const int Seed = 50;
         const float ZoomFactor = 100f;
         const int Octaves = 4;
 
-        var noise = new OpenSimplexNoise(Seed, ZoomFactor, Octaves);
+        var baseNoise = new OpenSimplexNoise(Seed, ZoomFactor);
+        var noise = new FractalNoise(baseNoise, Octaves);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -839,7 +870,7 @@ public class NoiseTests
 
         heatmap.Colormap = new BasicTerrainColorMap(WaterCutoff, LandCutoff);
         heatmap.Smooth = true;
-        plt.Title("2D OpenSimplex Noise Terrain");
+        plt.Title("2D Fractal OpenSimplex Noise Terrain");
         plt.XLabel("X");
         plt.YLabel("Y");
 
@@ -850,13 +881,13 @@ public class NoiseTests
     }
 
     [TestMethod]
-    public void TestPerlinNoise2DToTerrainMap()
+    public void TestFractalPerlinNoise2DToTerrainMap()
     {
         const int Seed = 50;
         const int ZoomFactor = 100;
         const int Octaves = 12;
 
-        var noise = new PerlinNoise(Seed, ZoomFactor, Octaves);
+        var noise = new FractalNoise(new PerlinNoise(Seed, ZoomFactor), Octaves);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -896,12 +927,12 @@ public class NoiseTests
         const int ZoomFactor = 100;
         const int Octaves = 4;
 
-        var baseNoise = new OpenSimplexNoise(Seed, ZoomFactor, Octaves);
+        var baseNoise = new FractalNoise(new OpenSimplexNoise(Seed, ZoomFactor), Octaves);
 
         const int Seed2 = 34;
         const int ZoomFactor2 = 100;
         const int Octaves2 = 4;
-        var rotationNoise = new PerlinNoise(Seed2, ZoomFactor2, Octaves2);
+        var rotationNoise = new FractalNoise(new PerlinNoise(Seed2, ZoomFactor2), Octaves2);
 
         const float MaxRotationAngleRadians = MathF.PI / 2;
         var noise = new DynamicDomainRotateNoise(baseNoise, rotationNoise, MaxRotationAngleRadians);
@@ -943,7 +974,7 @@ public class NoiseTests
         const int Octaves = 4;
         const int ZoomFactor = 100;
 
-        var noise = new ValueNoise(Seed, ZoomFactor, Octaves);
+        var noise = new FractalNoise(new ValueNoise(Seed, ZoomFactor), Octaves);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
