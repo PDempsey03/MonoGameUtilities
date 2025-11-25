@@ -1,11 +1,15 @@
 
 using Microsoft.Xna.Framework;
+using ScottPlot;
+using System.Reflection;
 
 namespace Mmc.MonoGame.Utils.Tests;
 
 [TestClass]
 public class PseudoRandomTests
 {
+    private const string OutputFolder = "PseudoRandom";
+
     [TestMethod]
     public void TestEqualRandomNoParameters()
     {
@@ -25,6 +29,27 @@ public class PseudoRandomTests
 
         var val = random.GetRandomValue(Param);
         for (int i = 0; i < 10; i++) Assert.IsTrue(val == random.GetRandomValue(Param));
+    }
+
+    [TestMethod]
+    public void TestRandomContainsEnds()
+    {
+        const int Seed = 34;
+        int[] Params = [14, 42, 0];
+        PseudoRandom random = new PseudoRandom(Seed);
+
+        bool hasZero = false;
+        bool hasOne = false;
+        for (int i = 0; i < 17_000_000; i++)
+        {
+            Params[2] = i;
+            var r = random.GetRandomValue(Params);
+            if (r == 0) hasZero = true;
+            else if (r == 1) hasOne = true;
+        }
+
+        Assert.IsTrue(hasZero, "No zero value");
+        Assert.IsTrue(hasOne, "No one value");
     }
 
     [TestMethod]
@@ -182,5 +207,48 @@ public class PseudoRandomTests
         {
             Assert.IsTrue(shuffledArray[i] == secondShuffledArray[i]);
         }
+    }
+
+    [TestMethod]
+    public void TestBinnedRandomValues()
+    {
+        const int Seed = 4345423;
+        int[] Params = [4, 644435, 0];
+        PseudoRandom random = new PseudoRandom(Seed);
+
+        const int SampleCount = 10_000_000;
+
+        // binning
+        double min = 0;
+        double max = 1;
+        double step = 0.05;
+        int binCount = (int)Math.Round((max - min) / step);
+        int[] counts = new int[binCount]; // how many values fall within the range of its bin
+        double[] centers = new double[binCount];
+
+        // calculate centers
+        for (int b = 0; b < binCount; b++)
+            centers[b] = min + (b + .5) * step;
+
+        // determine which bin each point will go in
+        for (int i = 0; i < SampleCount; i++)
+        {
+            Params[2] = i;
+            var val = random.GetRandomValue(Params);
+            int bin = (int)Math.Floor((val - min) / step);
+            if (bin >= 0 && bin < binCount)
+                counts[bin]++;
+        }
+
+        var plt = new Plot();
+        plt.Add.Scatter(centers, counts.Select(c => (double)c).ToArray());
+        plt.Title("Pseudo Random Value Distribution");
+        plt.XLabel("Bins");
+        plt.YLabel("Value Counts");
+
+        Directory.CreateDirectory(OutputFolder);
+        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
+        plt.SavePng(path, 500, 500);
+        Console.WriteLine($"Saved plot to {path}");
     }
 }

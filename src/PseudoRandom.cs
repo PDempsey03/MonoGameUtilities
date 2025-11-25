@@ -20,30 +20,31 @@ namespace Mmc.MonoGame.Utils
         {
             unchecked
             {
-                // initial hash to mix in the seed
-                uint hash = (uint)Seed;
+                ulong h = (ulong)Seed * 0x9E3779B97F4A7C15UL;
 
-                // mix in each param value
-                for (int i = 0; i < values.Length; i++)
+                foreach (var v in values)
                 {
-                    uint k = (uint)values[i];
-                    k ^= k >> 16;
-                    k *= 0x85EBCA6B;
-                    k ^= k >> 13;
-                    k *= 0xC2B2AE35;
-                    k ^= k >> 16;
-                    hash ^= k;
-                    hash *= 0x27D4EB2D;
+                    ulong k = (ulong)(uint)v;
+
+                    k *= 0xD6E8FEB86659FD93UL;
+                    k ^= k >> 32;
+                    k *= 0xD6E8FEB86659FD93UL;
+                    k ^= k >> 32;
+
+                    h ^= k;
+                    h = (h << 27) | (h >> 37);
+                    h *= 0x94D049BB133111EBUL;
                 }
 
-                // final fix
-                hash ^= hash >> 15;
-                hash *= 0x85EBCA6B;
-                hash ^= hash >> 13;
-                hash *= 0xC2B2AE35;
-                hash ^= hash >> 16;
+                h ^= h >> 33;
+                h *= 0xFF51AFD7ED558CCDUL;
+                h ^= h >> 33;
+                h *= 0xC4CEB9FE1A85EC53UL;
+                h ^= h >> 33;
 
-                return (hash & 0x7fffffff) / 2147483647f; // [0,1]
+                // convert to [0,1)
+                const float inv = 1f / ((1 << 24) - 1);
+                return (float)(h >> 40) * inv;
             }
         }
 
