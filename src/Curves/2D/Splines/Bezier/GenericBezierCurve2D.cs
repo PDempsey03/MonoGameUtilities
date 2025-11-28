@@ -4,10 +4,17 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier
 {
     public class GenericBezierCurve2D : Curve2D
     {
+        /// <summary>
+        /// Array of control points where the first and last are the star and end points respectively.
+        /// </summary>
         public Vector2[] ControlPoints { get; set; }
 
         public override bool IsSmooth => true;
 
+        /// <summary>
+        /// Construct generic bezier curve.
+        /// </summary>
+        /// <param name="args">Control points with first and last points being at the start and end of the curve.</param>
         public GenericBezierCurve2D(params Vector2[] args)
         {
             ControlPoints = args;

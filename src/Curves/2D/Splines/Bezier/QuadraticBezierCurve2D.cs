@@ -5,14 +5,29 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier
 {
     public class QuadraticBezierCurve2D : Curve2D
     {
+        /// <summary>
+        /// Start point of the curve
+        /// </summary>
         public Vector2 P0 { get; set; }
 
+        /// <summary>
+        /// Control point of the curve
+        /// </summary>
         public Vector2 P1 { get; set; }
 
+        /// <summary>
+        /// End point of the curve
+        /// </summary>
         public Vector2 P2 { get; set; }
 
         public override bool IsSmooth => true;
 
+        /// <summary>
+        /// Creates a new quadratic Bezier curve with the specified points.
+        /// </summary>
+        /// <param name="p0">The start point of the curve.</param>
+        /// <param name="p1">The control point of the curve.</param>
+        /// <param name="p2">The end point of the curve.</param>
         public QuadraticBezierCurve2D(Vector2 p0, Vector2 p1, Vector2 p2)
         {
             P0 = p0;
@@ -41,6 +56,10 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier
             return total;
         }
 
+        /// <summary>
+        /// Convert to a a QuadraticCurve2D.
+        /// </summary>
+        /// <returns>QuadraticCurve2D with identical curve.</returns>
         public QuadraticCurve2D ToQuadraticCurve2D()
         {
             const float LerpValue = .5f;

@@ -7,6 +7,9 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Geometric
     {
         private Vector2[] _vertices = [];
 
+        /// <summary>
+        /// All verticies defining the polygon.
+        /// </summary>
         public Vector2[] Vertices
         {
             set
@@ -16,12 +19,19 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Geometric
             }
         }
 
+        /// <summary>
+        /// Instantiate new instance of PolygonalCurve2D.
+        /// </summary>
+        /// <param name="vertices">All verticies defining the polygon.</param>
         public PolygonalCurve2D(params Vector2[] vertices)
         {
             Vertices = vertices ?? [];
             RebuildPolygon();
         }
 
+        /// <summary>
+        /// Removes old line segments and creates new ones based on the current vertices.
+        /// </summary>
         protected virtual void RebuildPolygon()
         {
             Curves.Clear();

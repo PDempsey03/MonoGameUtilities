@@ -2,23 +2,36 @@
 
 namespace Mmc.MonoGame.Utils.Curves._2D.Splines
 {
+    /// <summary>
+    /// Spline which interpolates between all points with cubic functions defined by derivative values at each point.
+    /// </summary>
     public class CubicHermiteSplineCurve2D : CompoundCurve2D
     {
         /// <summary>
-        /// Takes derivative values and scales them to be Vector2's of magnitude 1
+        /// Initialize new curve by taking derivative values and scaling them to be Vector2's of magnitude 1
         /// </summary>
         /// <param name="points">Points on the curve</param>
-        /// <param name="derivatives">derivative values at points which will be given magnitude 1</param>
+        /// <param name="derivatives">Derivative values at points which will be given magnitude 1</param>
         public CubicHermiteSplineCurve2D(Vector2[] points, float[] derivatives)
         {
             InitializeToValues(points, derivatives.Select(d => Vector2.Normalize(new Vector2(1, d))).ToArray());
         }
 
+        /// <summary>
+        /// Initialize new curve with raw values.
+        /// </summary>
+        /// <param name="points">Points on the curve</param>
+        /// <param name="tangents">Raw tangent values at each point</param>
         public CubicHermiteSplineCurve2D(Vector2[] points, Vector2[] tangents)
         {
             InitializeToValues(points, tangents);
         }
 
+        /// <summary>
+        /// Resets and updates curve definition to new parameters.
+        /// </summary>
+        /// <param name="points">Points on the curve</param>
+        /// <param name="tangents">Raw tangent values at each point</param>
         public virtual void InitializeToValues(Vector2[] points, Vector2[] tangents)
         {
             if (points.Length < 2) return; // cant do 1 point
@@ -46,6 +59,9 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Splines
             Curves.Add(new CubicHermiteSegment(points[i], points[i + 1], curTangent, nextTangent));
         }
 
+        /// <summary>
+        /// Internal representation of each segment of the cubic hermite spline
+        /// </summary>
         private class CubicHermiteSegment : Curve2D
         {
             private Vector2 P0 { get; set; }

@@ -2,12 +2,22 @@
 
 namespace Mmc.MonoGame.Utils.Curves._2D
 {
+    /// <summary>
+    /// Combines arbitrary amount of curves into one.
+    /// </summary>
     public class CompoundCurve2D : Curve2D
     {
+        /// <summary>
+        /// Curves defining the compound curve.
+        /// </summary>
         public List<Curve2D> Curves { get; private init; } = [];
 
         public override bool IsSmooth => CheckIfSmooth();
 
+        /// <summary>
+        /// Construct new instance of CompoundCurve2D.
+        /// </summary>
+        /// <param name="curves">Initial curves to construct compoud curve.</param>
         public CompoundCurve2D(params Curve2D[] curves)
         {
             Curves.AddRange(curves);
@@ -43,6 +53,10 @@ namespace Mmc.MonoGame.Utils.Curves._2D
             return (curveIndex, localT);
         }
 
+        /// <summary>
+        /// Check if continuity and smooth derivative transitions.
+        /// </summary>
+        /// <returns>Whether or not the curve is smooth.</returns>
         protected virtual bool CheckIfSmooth()
         {
             const float TangentDiffMargin = .1f;

@@ -6,14 +6,33 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Splines.Bezier
     {
         public override bool IsSmooth => true;
 
+        /// <summary>
+        /// Start point of the curve.
+        /// </summary>
         public Vector2 P0 { get; set; }
 
+        /// <summary>
+        /// First control point of the curve.
+        /// </summary>
         public Vector2 P1 { get; set; }
 
+        /// <summary>
+        /// Second control point of the curve.
+        /// </summary>
         public Vector2 P2 { get; set; }
 
+        /// <summary>
+        /// End Point of the curve.
+        /// </summary>
         public Vector2 P3 { get; set; }
 
+        /// <summary>
+        /// Creates a new cubic Bezier curve with the specified points.
+        /// </summary>
+        /// <param name="p0">The start point of the curve.</param>
+        /// <param name="p1">The first control point of the curve.</param>
+        /// <param name="p2">The second control point of the curve.</param>
+        /// <param name="p3">The end Point of the curve.</param>
         public CubicBezierCurve2D(Vector2 p0, Vector2 p1, Vector2 p2, Vector2 p3)
         {
             P0 = p0;

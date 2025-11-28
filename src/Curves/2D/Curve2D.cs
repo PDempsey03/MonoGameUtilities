@@ -2,14 +2,36 @@
 
 namespace Mmc.MonoGame.Utils.Curves._2D
 {
+    /// <summary>
+    /// 2D curve definition
+    /// </summary>
     public abstract class Curve2D
     {
+        /// <summary>
+        /// Rough definition of whether or not a curve is smooth. Smooth not being the rigourous math definition.
+        /// </summary>
         public abstract bool IsSmooth { get; }
 
+        /// <summary>
+        /// Get point on the curve corresponding to the given parametric value.
+        /// </summary>
+        /// <param name="t">Normalized parametric parameter in the range [0,1], where 0 is the start and 1 is the end.</param>
+        /// <returns>The point on the curve at the specified parametric position.</returns>
         public abstract Vector2 GetPoint(float t);
 
+        /// <summary>
+        /// Get tangent vector at the point on the curve corresponding to the given parametric value.
+        /// </summary>
+        /// <param name="t">Normalized parametric parameter in the range [0,1], where 0 is the start and 1 is the end.</param>
+        /// <returns>The tangent vector at the point on the curve at the specified parametric position.</returns>
         public abstract Vector2 GetTangent(float t);
 
+        /// <summary>
+        /// Get normal vector at the point on the curve corresponding to the given parametric value.
+        /// </summary>
+        /// <param name="t">Normalized parametric parameter in the range [0,1], where 0 is the start and 1 is the end.</param>
+        /// <param name="clockwise">Parameter defining which direction the tangent will rotate to get the normal.</param>
+        /// <returns>The normal vector at the point on the curve at the specified parametric position.</returns>
         public virtual Vector2 GetNormal(float t, bool clockwise = true)
         {
             Vector2 tangent = GetTangent(t);
@@ -23,6 +45,11 @@ namespace Mmc.MonoGame.Utils.Curves._2D
                 : new Vector2(-tangent.Y, tangent.X);
         }
 
+        /// <summary>
+        /// Approiximate the length of the curve by calculating linear distance between sample points.
+        /// </summary>
+        /// <param name="samples">Amount of sample points used to calculate length.</param>
+        /// <returns>Approximate length of the curve.</returns>
         public virtual float GetLength(int samples = 25)
         {
             float length = 0;
@@ -39,6 +66,11 @@ namespace Mmc.MonoGame.Utils.Curves._2D
             return length;
         }
 
+        /// <summary>
+        /// Get <paramref name="numPoints"/> points along the curve, with evenly spaced out t values.
+        /// </summary>
+        /// <param name="numPoints">Amount of points along the curve.</param>
+        /// <returns><paramref name="numPoints"/> along the curve.</returns>
         public virtual Vector2[] GetPoints(int numPoints)
         {
             Vector2[] points = new Vector2[numPoints];
@@ -52,6 +84,12 @@ namespace Mmc.MonoGame.Utils.Curves._2D
             return points;
         }
 
+        /// <summary>
+        /// Get <paramref name="numPoints"/> points along the curve, with evenly spaced out distance along the curve values.
+        /// </summary>
+        /// <param name="numPoints">Amount of points along the curve.</param>
+        /// <param name="superSamplingSize">Amount of points to perform arc length re-parameterization</param>
+        /// <returns><paramref name="numPoints"/> along the curve.</returns>
         public virtual Vector2[] GetEvenlySpacedPoints(int numPoints, int superSamplingSize = 1024)
         {
             // Uses the arc length reparameterization technique

@@ -11,6 +11,9 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Geometric
 
         public override bool IsSmooth => false;
 
+        /// <summary>
+        /// First vertex of the triangle.
+        /// </summary>
         public Vector2 Vertex1
         {
             get => _vertex1;
@@ -21,6 +24,9 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Geometric
             }
         }
 
+        /// <summary>
+        /// Second vertex of the triangle.
+        /// </summary>
         public Vector2 Vertex2
         {
             get => _vertex2;
@@ -31,6 +37,9 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Geometric
             }
         }
 
+        /// <summary>
+        /// Third vertex of the triangle.
+        /// </summary>
         public Vector2 Vertex3
         {
             get => _vertex3;
@@ -41,6 +50,12 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Geometric
             }
         }
 
+        /// <summary>
+        /// Instantiate new instance of TriangularCurve2D.
+        /// </summary>
+        /// <param name="vertex1">First vertex of the triangle.</param>
+        /// <param name="vertex2">Second vertex of the triangle.</param>
+        /// <param name="vertex3">Third vertex of the triangle.</param>
         public TriangularCurve2D(Vector2 vertex1, Vector2 vertex2, Vector2 vertex3)
         {
             _vertex1 = vertex1;
@@ -49,6 +64,9 @@ namespace Mmc.MonoGame.Utils.Curves._2D.Geometric
             RebuildTriangularCurve();
         }
 
+        /// <summary>
+        /// Removes old line segments and creates new ones based on the current values of Vertex 1-3.
+        /// </summary>
         protected virtual void RebuildTriangularCurve()
         {
             Curves.Clear();
