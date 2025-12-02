@@ -6,6 +6,8 @@ namespace Mmc.MonoGame.Collisions.CollisionShapes
     {
         Vector2 Position { get; set; }
 
+        AxisAlignedBoundingBox BoundingBox { get; }
+
         bool ContainsPoint(Vector2 point);
     }
 }

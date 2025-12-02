@@ -10,6 +10,8 @@ namespace Mmc.MonoGame.Collisions.CollisionShapes
 
         public float Rotation { get; set; }
 
+        public readonly AxisAlignedBoundingBox BoundingBox => new AxisAlignedBoundingBox(); // TODO: implement
+
         public CapsuleCollisionShape(Vector2 position, Vector2 halfExtents, float rotation)
         {
             Position = position;

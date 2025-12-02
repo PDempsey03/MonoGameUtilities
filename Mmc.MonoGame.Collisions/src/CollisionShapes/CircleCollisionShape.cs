@@ -8,6 +8,8 @@ namespace Mmc.MonoGame.Collisions.CollisionShapes
 
         public float Radius { get; set; }
 
+        public readonly AxisAlignedBoundingBox BoundingBox => new AxisAlignedBoundingBox(Position.X, Position.Y, 2 * Radius, 2 * Radius);
+
         public CircleCollisionShape(Vector2 initialPosition, float radius)
         {
             Position = initialPosition;

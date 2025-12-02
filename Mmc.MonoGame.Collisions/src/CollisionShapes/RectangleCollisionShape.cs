@@ -10,6 +10,12 @@ namespace Mmc.MonoGame.Collisions.CollisionShapes
 
         public float Rotation { get; set; }
 
+        public readonly AxisAlignedBoundingBox BoundingBox => new AxisAlignedBoundingBox(Position.X, Position.Y, 2 * MathF.Cos(Rotation), 2 * MathF.Sin(Rotation));
+
+        public readonly Vector2 Right => new Vector2(MathF.Cos(Rotation), MathF.Sin(Rotation));
+
+        public readonly Vector2 Up => new Vector2(-MathF.Sin(Rotation), MathF.Cos(Rotation));
+
         public RectangleCollisionShape(Vector2 position, Vector2 halfExtents, float rotation)
         {
             Position = position;
@@ -23,11 +29,7 @@ namespace Mmc.MonoGame.Collisions.CollisionShapes
 
         public RectangleCollisionShape() : this(Vector2.Zero) { }
 
-        public Vector2 Right => new Vector2(MathF.Cos(Rotation), MathF.Sin(Rotation));
-
-        public Vector2 Up => new Vector2(-MathF.Sin(Rotation), MathF.Cos(Rotation));
-
-        public Vector2[] GetCorners()
+        public readonly Vector2[] GetCorners()
         {
             var r = Right;
             var u = Up;
