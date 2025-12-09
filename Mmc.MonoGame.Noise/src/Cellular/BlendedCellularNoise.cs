@@ -1,15 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Mmc.MonoGame.Utils;
 
 namespace Mmc.MonoGame.Noise.Cellular
 {
     public class BlendedCellularNoise : CellularNoise
     {
-        public BlendedCellularNoise(int seed, float cellSize = 1, Func<Vector2, Vector2, float>? distanceMetric = null) : base(seed, cellSize, distanceMetric)
+        public BlendedCellularNoise(int seed, double cellSize = 1, Func<Vector2d, Vector2d, double>? distanceMetric = null) : base(seed, cellSize, distanceMetric)
         {
 
         }
 
-        protected override float CalculateReturnValue(float minDistance1, float minDistance2)
+        protected override double CalculateReturnValue(double minDistance1, double minDistance2)
         {
             return (minDistance1 + minDistance2) / 2;
         }

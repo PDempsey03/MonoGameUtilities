@@ -12,7 +12,7 @@
             NoiseB = noiseB;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
             return (NoiseA.GetValue(x, y) + NoiseB.GetValue(x, y)) / 2;
         }

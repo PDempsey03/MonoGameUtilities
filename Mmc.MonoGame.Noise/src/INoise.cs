@@ -2,6 +2,6 @@
 {
     public interface INoise
     {
-        float GetValue(float x, float y);
+        double GetValue(double x, double y);
     }
 }

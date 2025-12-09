@@ -11,7 +11,7 @@ namespace Mmc.MonoGame.Noise.ColoredNoise
             PseudoRandom = new PseudoRandom(seed);
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
             return PseudoRandom.GetRandomValue(x, y) * 2 - 1; // ensure range is [-1, 1]
         }

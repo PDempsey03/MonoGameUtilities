@@ -9,7 +9,7 @@
             SourceNoise = sourceNoise;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
             return -SourceNoise.GetValue(x, y);
         }

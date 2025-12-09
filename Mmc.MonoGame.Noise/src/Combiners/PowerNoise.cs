@@ -4,17 +4,17 @@
     {
         private INoise SourceNoise { get; init; }
 
-        private float Power { get; init; }
+        private double Power { get; init; }
 
-        public PowerNoise(INoise sourceNoise, float power)
+        public PowerNoise(INoise sourceNoise, double power)
         {
             SourceNoise = sourceNoise;
             Power = power;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
-            return MathF.Pow(SourceNoise.GetValue(x, y), Power);
+            return Math.Pow(SourceNoise.GetValue(x, y), Power);
         }
     }
 }

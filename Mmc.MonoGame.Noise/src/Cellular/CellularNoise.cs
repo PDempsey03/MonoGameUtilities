@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework;
-using Mmc.MonoGame.Utils;
+﻿using Mmc.MonoGame.Utils;
 
 namespace Mmc.MonoGame.Noise.Cellular
 {
@@ -7,29 +6,29 @@ namespace Mmc.MonoGame.Noise.Cellular
     {
         protected PseudoRandom PseudoRandom { get; init; }
 
-        protected float CellSize { get; init; }
+        protected double CellSize { get; init; }
 
-        protected Func<Vector2, Vector2, float> DistanceMetric { get; init; }
+        protected Func<Vector2d, Vector2d, double> DistanceMetric { get; init; }
 
-        public CellularNoise(int seed, float cellSize = 1, Func<Vector2, Vector2, float>? distanceMetric = null)
+        public CellularNoise(int seed, double cellSize = 1, Func<Vector2d, Vector2d, double>? distanceMetric = null)
         {
             PseudoRandom = new PseudoRandom(seed);
             CellSize = cellSize;
-            DistanceMetric = distanceMetric ?? Vector2.Distance;
+            DistanceMetric = distanceMetric ?? Vector2d.Distance;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
             x /= CellSize;
             y /= CellSize;
 
-            Vector2 givenPoint = new Vector2(x, y);
+            Vector2d givenPoint = new Vector2d(x, y);
 
             int xi = (int)x;
             int yi = (int)y;
 
-            float minDistance1 = float.MaxValue;
-            float minDistance2 = float.MaxValue;
+            double minDistance1 = float.MaxValue;
+            double minDistance2 = float.MaxValue;
 
             // check the the cells in a 3x3 range around the current cell
             for (int dy = -1; dy <= 1; dy++)
@@ -39,11 +38,11 @@ namespace Mmc.MonoGame.Noise.Cellular
                     int cx = xi + dx;
                     int cy = yi + dy;
 
-                    float xOffset = PseudoRandom.GetRandomValue(cx, cy, 1);
-                    float yOffset = PseudoRandom.GetRandomValue(cx, cy, 2);
-                    Vector2 pointInC = new Vector2(cx + xOffset, cy + yOffset);
+                    double xOffset = PseudoRandom.GetRandomValue(cx, cy, 1);
+                    double yOffset = PseudoRandom.GetRandomValue(cx, cy, 2);
+                    Vector2d pointInC = new Vector2d(cx + xOffset, cy + yOffset);
 
-                    float newDistance = DistanceMetric(pointInC, givenPoint);
+                    double newDistance = DistanceMetric(pointInC, givenPoint);
 
                     if (newDistance < minDistance1)
                     {
@@ -60,7 +59,7 @@ namespace Mmc.MonoGame.Noise.Cellular
             return CalculateReturnValue(minDistance1, minDistance2) * CellSize;
         }
 
-        protected virtual float CalculateReturnValue(float minDistance1, float minDistance2)
+        protected virtual double CalculateReturnValue(double minDistance1, double minDistance2)
         {
             return minDistance1;
         }

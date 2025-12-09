@@ -4,15 +4,15 @@
     {
         private INoise SourceNoise { get; init; }
 
-        private float AngleRadians { get; init; }
+        private double AngleRadians { get; init; }
 
-        private float XPivot { get; init; }
+        private double XPivot { get; init; }
 
-        private float YPivot { get; init; }
+        private double YPivot { get; init; }
 
         private bool ClockWiseRotation { get; init; }
 
-        public RotateNoise(INoise sourceNoise, float angleRadians, float xPivot = 0, float yPivot = 0, bool clockWiseRotation = false)
+        public RotateNoise(INoise sourceNoise, double angleRadians, double xPivot = 0, double yPivot = 0, bool clockWiseRotation = false)
         {
             SourceNoise = sourceNoise;
             AngleRadians = angleRadians;
@@ -21,18 +21,18 @@
             ClockWiseRotation = clockWiseRotation;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
-            float px = x - XPivot;
-            float py = y - YPivot;
+            double px = x - XPivot;
+            double py = y - YPivot;
 
-            float trueAngle = ClockWiseRotation ? -AngleRadians : AngleRadians;
+            double trueAngle = ClockWiseRotation ? -AngleRadians : AngleRadians;
 
-            float cos = MathF.Cos(trueAngle);
-            float sin = MathF.Sin(trueAngle);
+            double cos = Math.Cos(trueAngle);
+            double sin = Math.Sin(trueAngle);
 
-            float rotatedX = px * cos - py * sin;
-            float rotatedY = px * sin + py * cos;
+            double rotatedX = px * cos - py * sin;
+            double rotatedY = px * sin + py * cos;
 
             rotatedX += XPivot;
             rotatedY += YPivot;

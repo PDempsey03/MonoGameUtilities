@@ -1,4 +1,3 @@
-using Microsoft.Xna.Framework;
 using Mmc.MonoGame.Noise.Cellular;
 using Mmc.MonoGame.Noise.ColoredNoise;
 using Mmc.MonoGame.Noise.Fractal;
@@ -137,140 +136,6 @@ public class NoiseTests
         heatmap.Colormap = new NoiseGrayScale();
         heatmap.Smooth = true;
         plt.Title("2D White Noise");
-        plt.XLabel("X");
-        plt.YLabel("Y");
-
-        Directory.CreateDirectory(OutputFolder);
-        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
-        plt.SavePng(path, 500, 500);
-        Console.WriteLine($"Saved plot to {path}");
-    }
-
-    [TestMethod]
-    public void TestPinkNoise1D()
-    {
-        const int Seed = 44;
-        const int Octaves = 2;
-
-        var noise = new PinkNoise(Seed, Octaves);
-
-        const int SampleCount = 50;
-
-        double[] x = new double[SampleCount];
-        double[] y = new double[SampleCount];
-
-        for (int i = 0; i < SampleCount; i++)
-        {
-            x[i] = i;
-            y[i] = noise.GetValue(i, 1);
-        }
-
-        var plt = new Plot();
-        var scatter = plt.Add.Scatter(x, y);
-        scatter.MarkerSize = 0;
-        plt.Title("1D Pink Noise");
-        plt.XLabel("X");
-        plt.YLabel("Noise Value");
-
-        Directory.CreateDirectory(OutputFolder);
-        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
-        plt.SavePng(path, 500, 500);
-        Console.WriteLine($"Saved plot to {path}");
-    }
-
-    [TestMethod]
-    public void TestPinkNoise2D()
-    {
-        const int Seed = 256;
-        const int Octaves = 2;
-
-        var noise = new PinkNoise(Seed, Octaves);
-
-        const int SampleCountX = 50;
-        const int SampleCountY = 50;
-
-        double[,] values = new double[SampleCountX, SampleCountY];
-
-        for (int i = 0; i < SampleCountX; i++)
-        {
-            for (int j = 0; j < SampleCountY; j++)
-            {
-                values[i, j] = noise.GetValue(i, j);
-            }
-        }
-
-        var plt = new Plot();
-        var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new NoiseGrayScale();
-        heatmap.Smooth = true;
-        plt.Title("2D Pink Noise");
-        plt.XLabel("X");
-        plt.YLabel("Y");
-
-        Directory.CreateDirectory(OutputFolder);
-        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
-        plt.SavePng(path, 500, 500);
-        Console.WriteLine($"Saved plot to {path}");
-    }
-
-    [TestMethod]
-    public void TestBrownNoise1D()
-    {
-        const int Seed = 44;
-        const int Octaves = 2;
-
-        var noise = new BrownNoise(Seed, Octaves);
-
-        const int SampleCount = 50;
-
-        double[] x = new double[SampleCount];
-        double[] y = new double[SampleCount];
-
-        for (int i = 0; i < SampleCount; i++)
-        {
-            x[i] = i;
-            y[i] = noise.GetValue(i, 1);
-        }
-
-        var plt = new Plot();
-        var scatter = plt.Add.Scatter(x, y);
-        scatter.MarkerSize = 0;
-        plt.Title("1D Brown Noise");
-        plt.XLabel("X");
-        plt.YLabel("Noise Value");
-
-        Directory.CreateDirectory(OutputFolder);
-        string path = Path.Combine(OutputFolder, $"{MethodBase.GetCurrentMethod()?.Name ?? "ERROR"}.png");
-        plt.SavePng(path, 500, 500);
-        Console.WriteLine($"Saved plot to {path}");
-    }
-
-    [TestMethod]
-    public void TestBrownNoise2D()
-    {
-        const int Seed = 358;
-        const int Octaves = 2;
-
-        var noise = new BrownNoise(Seed, Octaves);
-
-        const int SampleCountX = 50;
-        const int SampleCountY = 50;
-
-        double[,] values = new double[SampleCountX, SampleCountY];
-
-        for (int i = 0; i < SampleCountX; i++)
-        {
-            for (int j = 0; j < SampleCountY; j++)
-            {
-                values[i, j] = noise.GetValue(i, j);
-            }
-        }
-
-        var plt = new Plot();
-        var heatmap = plt.Add.Heatmap(values);
-        heatmap.Colormap = new NoiseGrayScale();
-        heatmap.Smooth = true;
-        plt.Title("2D Brown Noise");
         plt.XLabel("X");
         plt.YLabel("Y");
 
@@ -441,9 +306,8 @@ public class NoiseTests
     {
         const int Seed = 24;
         const int CellSize = 80;
-        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
 
-        var noise = new CellularNoise(Seed, CellSize, distanceMetric);
+        var noise = new CellularNoise(Seed, CellSize);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -477,9 +341,8 @@ public class NoiseTests
     {
         const int Seed = 24;
         const int CellSize = 80;
-        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
 
-        var noise = new SecondOrderCellularNoise(Seed, CellSize, distanceMetric);
+        var noise = new SecondOrderCellularNoise(Seed, CellSize);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -513,9 +376,8 @@ public class NoiseTests
     {
         const int Seed = 24;
         const int CellSize = 80;
-        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
 
-        var noise = new EdgeCellularNoise(Seed, CellSize, distanceMetric);
+        var noise = new EdgeCellularNoise(Seed, CellSize);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -549,9 +411,8 @@ public class NoiseTests
     {
         const int Seed = 24;
         const int CellSize = 80;
-        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
 
-        var noise = new InvertedCellularNoise(Seed, CellSize, distanceMetric);
+        var noise = new InvertedCellularNoise(Seed, CellSize);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -585,9 +446,8 @@ public class NoiseTests
     {
         const int Seed = 24;
         const int CellSize = 80;
-        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
 
-        var noise = new BlendedCellularNoise(Seed, CellSize, distanceMetric);
+        var noise = new BlendedCellularNoise(Seed, CellSize);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -621,9 +481,8 @@ public class NoiseTests
     {
         const int Seed = 24;
         const int CellSize = 80;
-        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
 
-        var noise = new MultiplicativeCellularNoise(Seed, CellSize, distanceMetric);
+        var noise = new MultiplicativeCellularNoise(Seed, CellSize);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -657,9 +516,8 @@ public class NoiseTests
     {
         const int Seed = 24;
         const int CellSize = 80;
-        Func<Vector2, Vector2, float> distanceMetric = Vector2.Distance;
 
-        var noise = new RatioCellularNoise(Seed, CellSize, distanceMetric);
+        var noise = new RatioCellularNoise(Seed, CellSize);
 
         const int SampleCountX = 1000;
         const int SampleCountY = 1000;
@@ -713,7 +571,7 @@ public class NoiseTests
         // determine which bin each point will go in
         for (int i = 0; i < SampleCount; i++)
         {
-            float val = noise.GetValue(i, 1);
+            double val = noise.GetValue(i, 1);
             int bin = (int)Math.Floor((val - min) / step);
             if (bin >= 0 && bin < binCount)
                 counts[bin]++;
@@ -882,7 +740,7 @@ public class NoiseTests
     [TestMethod]
     public void TestFractalPerlinNoise2DToTerrainMap()
     {
-        const int Seed = 50;
+        const int Seed = 4;
         const int ZoomFactor = 100;
         const int Octaves = 12;
 
@@ -967,7 +825,7 @@ public class NoiseTests
     }
 
     [TestMethod]
-    public void TestValueNoise2D()
+    public void TestFractalValueNoise2D()
     {
         const int Seed = 13;
         const int Octaves = 4;

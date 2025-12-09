@@ -4,18 +4,18 @@
     {
         private INoise SourceNoise { get; init; }
 
-        private float XTrans { get; init; }
+        private double XTrans { get; init; }
 
-        private float YTrans { get; init; }
+        private double YTrans { get; init; }
 
-        public TranslateNoise(INoise sourceNoise, float xTrans, float yTrans)
+        public TranslateNoise(INoise sourceNoise, double xTrans, double yTrans)
         {
             SourceNoise = sourceNoise;
             XTrans = xTrans;
             YTrans = yTrans;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
             return SourceNoise.GetValue(x + XTrans, y + YTrans);
         }

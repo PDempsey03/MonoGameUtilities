@@ -14,7 +14,7 @@ namespace Mmc.MonoGame.Noise
             ZoomFactor = zoomFactor;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
             x /= ZoomFactor;
             y /= ZoomFactor;
@@ -26,28 +26,28 @@ namespace Mmc.MonoGame.Noise
             int y1 = y0 + 1;
 
             // interpolation weights
-            float sx = x - x0;
-            float sy = y - y0;
+            double sx = x - x0;
+            double sy = y - y0;
 
             // compute and interpolate top two corners
-            float n0 = PseudoRandom.GetRandomValueInRange(-1, 1, x0, y0);
-            float n1 = PseudoRandom.GetRandomValueInRange(-1, 1, x1, y0);
-            float ix0 = CubicInterpolation(n0, n1, sx);
+            double n0 = PseudoRandom.GetRandomValueInRange(-1, 1, x0, y0);
+            double n1 = PseudoRandom.GetRandomValueInRange(-1, 1, x1, y0);
+            double ix0 = CubicInterpolation(n0, n1, sx);
 
             // compute and interpolate bottom two corners
             n0 = PseudoRandom.GetRandomValueInRange(-1, 1, x0, y1);
             n1 = PseudoRandom.GetRandomValueInRange(-1, 1, x1, y1);
-            float ix1 = CubicInterpolation(n0, n1, sx);
+            double ix1 = CubicInterpolation(n0, n1, sx);
 
             // interpolate previously interpolated horizontal values vertically to get answer
-            float result = CubicInterpolation(ix0, ix1, sy);
+            double result = CubicInterpolation(ix0, ix1, sy);
 
             return result;
         }
 
-        private static float CubicInterpolation(float a0, float a1, float w)
+        private static double CubicInterpolation(double a0, double a1, double w)
         {
-            return (a1 - a0) * (3f - w * 2f) * w * w + a0;
+            return (a1 - a0) * (3d - w * 2d) * w * w + a0;
         }
     }
 }

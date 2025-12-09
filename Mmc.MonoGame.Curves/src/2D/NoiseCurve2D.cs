@@ -44,7 +44,7 @@ namespace Mmc.MonoGame.Curves._2D.Noise
 
             Vector2 originalPoint = ParentCurve.GetPoint(t);
 
-            return originalPoint + Scale * Noise.GetValue(originalPoint.X, originalPoint.Y) * Vector2.Normalize(ParentCurve.GetNormal(t));
+            return originalPoint + Scale * (float)Noise.GetValue(originalPoint.X, originalPoint.Y) * Vector2.Normalize(ParentCurve.GetNormal(t));
         }
 
         public override Vector2 GetTangent(float t)

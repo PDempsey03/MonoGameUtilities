@@ -4,15 +4,15 @@
     {
         private INoise SourceNoise { get; init; }
 
-        private Func<INoise, float> NoiseFunc { get; init; }
+        private Func<INoise, double> NoiseFunc { get; init; }
 
-        public SingleNoiseCombiner(INoise sourceNoise, Func<INoise, float> noiseFunc)
+        public SingleNoiseCombiner(INoise sourceNoise, Func<INoise, double> noiseFunc)
         {
             SourceNoise = sourceNoise;
             NoiseFunc = noiseFunc;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
             return NoiseFunc?.Invoke(SourceNoise) ?? SourceNoise.GetValue(x, y);
         }

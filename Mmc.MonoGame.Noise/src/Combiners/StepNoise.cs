@@ -12,13 +12,13 @@
             Steps = steps;
         }
 
-        public float GetValue(float x, float y)
+        public double GetValue(double x, double y)
         {
             // convert to [0,1] range for even stepping
-            float scaled = (SourceNoise.GetValue(x, y) + 1) / 2;
+            double scaled = (SourceNoise.GetValue(x, y) + 1) / 2;
 
             // forces value to be a value on a step interval
-            float stepped = MathF.Floor(scaled * Steps) / Steps;
+            double stepped = Math.Floor(scaled * Steps) / Steps;
 
             // convert bak to [-1, 1] range
             return stepped * 2 - 1;

@@ -2,7 +2,7 @@
 {
     public class TurbulentFractalNoise : FractalNoise
     {
-        public TurbulentFractalNoise(INoise baseNoise, int octaves = 6, float lacunarity = 2f, float gain = 0.5f) : base(baseNoise, octaves, lacunarity, gain)
+        public TurbulentFractalNoise(INoise baseNoise, int octaves = 6, double lacunarity = 2d, double gain = 0.5d) : base(baseNoise, octaves, lacunarity, gain)
         {
 
         }
@@ -12,9 +12,9 @@
 
         }
 
-        protected override float SummingFunction(float baseNoiseValue, float amplitude, float frequency)
+        protected override double SummingFunction(double baseNoiseValue, double amplitude, double frequency)
         {
-            return MathF.Abs(baseNoiseValue) * amplitude;
+            return Math.Abs(baseNoiseValue) * amplitude;
         }
     }
 }
