@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Primitives;
-using Mmc.MonoGame.UI.Primitives.Brushes;
 
 namespace Mmc.MonoGame.UI.Base
 {
@@ -26,6 +25,9 @@ namespace Mmc.MonoGame.UI.Base
                 }
             }
         }
+
+        public Vector2 DesiredSize { get; private set; }
+
         public Vector2 Size
         {
             get => _size;
@@ -50,11 +52,8 @@ namespace Mmc.MonoGame.UI.Base
         public Thickness Padding { get; set; }
         public Thickness Border { get; set; }
 
-        // brushes
-        public IBrush? BorderBrush { get; set; }
-        public IBrush? BackgroundBrush { get; set; }
-
         // hierarchy
+        public bool IsLayoutDirty { get => _isLayoutDirty; private set => _isLayoutDirty = value; }
         public UIElement? Parent { get; private set; }
         public List<UIElement> Children { get; init; } = [];
 
@@ -72,8 +71,6 @@ namespace Mmc.MonoGame.UI.Base
 
         public virtual void Update(GameTime gameTime)
         {
-            if (_isLayoutDirty) Rebuild();
-
             for (int i = 0; i < Children.Count; i++)
             {
                 Children[i].Update(gameTime);
@@ -82,72 +79,126 @@ namespace Mmc.MonoGame.UI.Base
 
         public virtual void Draw(SpriteBatch spriteBatch)
         {
-            BackgroundBrush?.Draw(this, spriteBatch, _globalBounds);
-            BorderBrush?.Draw(this, spriteBatch, _globalBounds);
-
             for (int i = 0; i < Children.Count; i++)
             {
                 Children[i].Draw(spriteBatch);
             }
         }
 
-        public virtual void Rebuild()
+        public virtual void Measure(Vector2 availableSize)
         {
-            Rectangle parentContentBounds = (Parent != null)
-                ? Parent.ContentBounds
-                : new Rectangle(0, 0, (int)_size.X, (int)_size.Y);
+            float marginWidth = Margin.Left + Margin.Right;
+            float marginHeight = Margin.Top + Margin.Bottom;
 
-            float availableWidth = parentContentBounds.Width - Margin.Left - Margin.Right;
-            float availableHeight = parentContentBounds.Height - Margin.Top - Margin.Bottom;
+            float internalWidth = Border.Left + Border.Right + Padding.Left + Padding.Right;
+            float internalHeight = Border.Top + Border.Bottom + Padding.Top + Padding.Bottom;
 
-            Vector2 alignPos = CalculateAlignment(availableWidth - Margin.Left - Margin.Right, availableHeight - Margin.Top - Margin.Bottom);
+            // if user specified a specific size, use that size, otherwise default to 0 which will use auto sizing
+            float bodyWidth = (Size.X > 0) ? Size.X : 0;
+            float bodyHeight = (Size.Y > 0) ? Size.Y : 0;
 
-            float finalX = parentContentBounds.X + alignPos.X + Margin.Left + Offset.X;
-            float finalY = parentContentBounds.Y + alignPos.Y + Margin.Top + Offset.Y;
+            // case a: if the respective bosy size is zero, then its using auto sizing so take the whole available size and remove the margins and internal width
+            // case b: if the respective body size is not zero, then that is the desired size, so subtract the internal width to get the content area
+            Vector2 childConstraint = new Vector2(
+                (bodyWidth == 0) ? (availableSize.X - marginWidth - internalWidth) : (bodyWidth - internalWidth),
+                (bodyHeight == 0) ? (availableSize.Y - marginHeight - internalHeight) : (bodyHeight - internalHeight)
+            );
 
-            int currentWidth = (int)((HorizontalAlignment == HorizontalAlignment.Stretch) ? availableWidth : Size.X);
-            int currentHeight = (int)((VerticalAlignment == VerticalAlignment.Stretch) ? availableHeight : Size.Y);
+            // ensure no negative numbers in constraint
+            childConstraint.X = Math.Max(0, childConstraint.X);
+            childConstraint.Y = Math.Max(0, childConstraint.Y);
 
-            _globalBounds = new Rectangle((int)finalX, (int)finalY, currentWidth, currentHeight);
-            _contentBounds = new Rectangle(
-                _globalBounds.X + (int)Padding.Left + (int)Border.Left,
-                _globalBounds.Y + (int)Padding.Top + (int)Border.Top,
-                _globalBounds.Width - (int)(Border.Left + Border.Right + Padding.Left + Padding.Right),
-                _globalBounds.Height - (int)(Border.Top + Border.Bottom + Padding.Top + Padding.Bottom)
+            // measure children to see their desired sizes
+            // this is the default by trying to use the max child size
+            Vector2 maxDesiredChildSize = Vector2.Zero;
+            foreach (var child in Children)
+            {
+                child.Measure(childConstraint);
+                maxDesiredChildSize.X = Math.Max(maxDesiredChildSize.X, child.DesiredSize.X);
+                maxDesiredChildSize.Y = Math.Max(maxDesiredChildSize.Y, child.DesiredSize.Y);
+            }
+
+            // if using auto sizing on either dimension, assign it now
+            if (bodyWidth == 0) bodyWidth = maxDesiredChildSize.X + internalWidth;
+            if (bodyHeight == 0) bodyHeight = maxDesiredChildSize.Y + internalHeight;
+
+            // set the desired size representing the its size (content, padding, and border) with its margins to encapsulate its true desired size
+            DesiredSize = new Vector2(
+                bodyWidth + marginWidth,
+                bodyHeight + marginHeight
             );
 
             _isLayoutDirty = false;
+        }
+
+        public virtual void Arrange(Rectangle finalRect)
+        {
+            // global bounds is simply the given bounds without the margins
+            _globalBounds = new Rectangle(
+                finalRect.X + (int)Margin.Left,
+                finalRect.Y + (int)Margin.Top,
+                finalRect.Width - (int)(Margin.Left + Margin.Right),
+                finalRect.Height - (int)(Margin.Top + Margin.Bottom)
+            );
+
+            // content bounds is the global bounds without the border or the padding (where children can be placed)
+            _contentBounds = new Rectangle(
+                _globalBounds.X + (int)(Border.Left + Padding.Left),
+                _globalBounds.Y + (int)(Border.Top + Padding.Top),
+                Math.Max(0, _globalBounds.Width - (int)(Border.Left + Border.Right + Padding.Left + Padding.Right)),
+                Math.Max(0, _globalBounds.Height - (int)(Border.Top + Border.Bottom + Padding.Top + Padding.Bottom))
+            );
+
+            // place children inside the content bounds
             foreach (var child in Children)
             {
-                child.Rebuild();
+                // determine how much space the child should be given
+                Rectangle childSlot = CalculateChildRectangle(child, _contentBounds);
+
+                // pass in how much space the child has been given
+                child.Arrange(childSlot);
             }
         }
 
-        private Vector2 CalculateAlignment(float availableWidth, float availableHeight)
+        protected virtual Rectangle CalculateChildRectangle(UIElement child, Rectangle contentBounds)
         {
-            // horizontal
-            float x = HorizontalAlignment switch
+            // determine width which for stretch is the whole rectangle's width, otherwise, clamp its desired width to rectangle width
+            float width = child.HorizontalAlignment switch
             {
-                HorizontalAlignment.Center => (availableWidth - Size.X) / 2,
-                HorizontalAlignment.Right => availableWidth - Size.X,
-                _ => 0
+                HorizontalAlignment.Stretch => contentBounds.Width,
+                _ => Math.Min(child.DesiredSize.X, contentBounds.Width)
             };
 
-            // vertical
-            float y = VerticalAlignment switch
+            // same for the height as the width
+            float height = child.VerticalAlignment switch
             {
-                VerticalAlignment.Center => (availableHeight - Size.Y) / 2,
-                VerticalAlignment.Bottom => availableHeight - Size.Y,
-                _ => 0
+                VerticalAlignment.Stretch => contentBounds.Height,
+                _ => Math.Min(child.DesiredSize.Y, contentBounds.Height)
             };
 
-            return new Vector2(x, y);
+            // determine x based on the horizontal alignment type
+            float x = child.HorizontalAlignment switch
+            {
+                HorizontalAlignment.Center => contentBounds.X + (contentBounds.Width - width) / 2f,
+                HorizontalAlignment.Right => contentBounds.X + contentBounds.Width - width,
+                _ => contentBounds.X // left and stretch both start at the far left
+            };
+
+            // determine y based on the vertical alignment type
+            float y = child.VerticalAlignment switch
+            {
+                VerticalAlignment.Center => contentBounds.Y + (contentBounds.Height - height) / 2f,
+                VerticalAlignment.Bottom => contentBounds.Y + contentBounds.Height - height,
+                _ => contentBounds.Y // top and stretch both start at the top
+            };
+
+            return new Rectangle((int)x, (int)y, (int)width, (int)height);
         }
 
         public void MarkDirty()
         {
             _isLayoutDirty = true;
-            foreach (var child in Children) child.MarkDirty();
+            Parent?.MarkDirty();
         }
     }
 }

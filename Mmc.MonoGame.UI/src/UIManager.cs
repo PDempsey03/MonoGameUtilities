@@ -27,13 +27,20 @@ namespace Mmc.MonoGame.UI
         {
             _game = game;
 
+            // root should be a plain background panel that anything can be placed into
             Root = new Panel()
             {
-                Border = new Thickness(60),
-                Padding = new Thickness(5),
-                Margin = new Thickness(5),
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,
+            };
+
+            var outerPanel = new Panel()
+            {
+                Border = new Thickness(20),
+                Padding = new Thickness(5),
+                Margin = new Thickness(5),
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Bottom,
                 BackgroundBrush = new SolidBrush()
                 {
                     Color = Color.Gray
@@ -43,15 +50,16 @@ namespace Mmc.MonoGame.UI
                     Color = Color.Red,
                 },
             };
+            Root.AddChild(outerPanel);
 
-            Root.AddChild(new Panel()
+            outerPanel.AddChild(new Panel()
             {
                 Size = new Vector2(10, 10),
-                Border = new Thickness(20),
+                Border = new Thickness(2),
                 Padding = new Thickness(0),
-                Margin = new Thickness(20),
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                VerticalAlignment = VerticalAlignment.Stretch,
+                Margin = new Thickness(5),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
                 BackgroundBrush = new SolidBrush()
                 {
                     Color = Color.Black
@@ -85,6 +93,15 @@ namespace Mmc.MonoGame.UI
 
         public void Update(GameTime gameTime)
         {
+            if (Root?.IsLayoutDirty ?? false)
+            {
+                Viewport viewPort = _game.GraphicsDevice.Viewport;
+
+                // force root to always be screen size
+                Root.Measure(new Vector2(viewPort.Width, viewPort.Height));
+                Root.Arrange(new Rectangle(0, 0, viewPort.Width, viewPort.Height));
+            }
+
             Root?.Update(gameTime);
         }
 
