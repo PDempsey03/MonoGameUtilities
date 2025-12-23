@@ -93,7 +93,7 @@ namespace Mmc.MonoGame.UI
 
         public void Update(GameTime gameTime)
         {
-            if (Root?.IsLayoutDirty ?? false)
+            if (Root.IsLayoutDirty)
             {
                 Viewport viewPort = _game.GraphicsDevice.Viewport;
 
@@ -102,7 +102,7 @@ namespace Mmc.MonoGame.UI
                 Root.Arrange(new Rectangle(0, 0, viewPort.Width, viewPort.Height));
             }
 
-            Root?.Update(gameTime);
+            Root.Update(gameTime);
         }
 
         public void Draw()
