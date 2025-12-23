@@ -6,11 +6,11 @@ namespace Mmc.MonoGame.UI.Base
 {
     public abstract class UIElement
     {
-        private bool _isLayoutDirty = true;
-        private Vector2 _offset = Vector2.Zero;
-        private Vector2 _size = Vector2.Zero;
-        private Rectangle _globalBounds;
-        private Rectangle _contentBounds;
+        protected bool _isLayoutDirty = true;
+        protected Vector2 _offset = Vector2.Zero;
+        protected Vector2 _size = Vector2.Zero;
+        protected Rectangle _globalBounds;
+        protected Rectangle _contentBounds;
 
         // transform
         public Vector2 Offset
@@ -26,7 +26,7 @@ namespace Mmc.MonoGame.UI.Base
             }
         }
 
-        public Vector2 DesiredSize { get; private set; }
+        public Vector2 DesiredSize { get; protected set; }
 
         public Vector2 Size
         {
@@ -133,21 +133,8 @@ namespace Mmc.MonoGame.UI.Base
 
         public virtual void Arrange(Rectangle finalRect)
         {
-            // global bounds is simply the given bounds without the margins
-            _globalBounds = new Rectangle(
-                finalRect.X + (int)Margin.Left,
-                finalRect.Y + (int)Margin.Top,
-                finalRect.Width - (int)(Margin.Left + Margin.Right),
-                finalRect.Height - (int)(Margin.Top + Margin.Bottom)
-            );
-
-            // content bounds is the global bounds without the border or the padding (where children can be placed)
-            _contentBounds = new Rectangle(
-                _globalBounds.X + (int)(Border.Left + Padding.Left),
-                _globalBounds.Y + (int)(Border.Top + Padding.Top),
-                Math.Max(0, _globalBounds.Width - (int)(Border.Left + Border.Right + Padding.Left + Padding.Right)),
-                Math.Max(0, _globalBounds.Height - (int)(Border.Top + Border.Bottom + Padding.Top + Padding.Bottom))
-            );
+            CalculateGlobalBounds(finalRect);
+            CalculateContentBounds();
 
             // place children inside the content bounds
             foreach (var child in Children)
@@ -160,7 +147,7 @@ namespace Mmc.MonoGame.UI.Base
             }
         }
 
-        protected virtual Rectangle CalculateChildRectangle(UIElement child, Rectangle contentBounds)
+        private Rectangle CalculateChildRectangle(UIElement child, Rectangle contentBounds)
         {
             // determine width which for stretch is the whole rectangle's width, otherwise, clamp its desired width to rectangle width
             float width = child.HorizontalAlignment switch
@@ -193,6 +180,28 @@ namespace Mmc.MonoGame.UI.Base
             };
 
             return new Rectangle((int)x, (int)y, (int)width, (int)height);
+        }
+
+        protected virtual void CalculateGlobalBounds(Rectangle parentContentBounds)
+        {
+            // global bounds is simply the given bounds without the margins
+            _globalBounds = new Rectangle(
+                parentContentBounds.X + (int)Margin.Left,
+                parentContentBounds.Y + (int)Margin.Top,
+                parentContentBounds.Width - (int)(Margin.Left + Margin.Right),
+                parentContentBounds.Height - (int)(Margin.Top + Margin.Bottom)
+            );
+        }
+
+        protected virtual void CalculateContentBounds()
+        {
+            // content bounds is the global bounds without the border or the padding (where children can be placed)
+            _contentBounds = new Rectangle(
+                _globalBounds.X + (int)(Border.Left + Padding.Left),
+                _globalBounds.Y + (int)(Border.Top + Padding.Top),
+                Math.Max(0, _globalBounds.Width - (int)(Border.Left + Border.Right + Padding.Left + Padding.Right)),
+                Math.Max(0, _globalBounds.Height - (int)(Border.Top + Border.Bottom + Padding.Top + Padding.Bottom))
+            );
         }
 
         public void MarkDirty()

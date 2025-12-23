@@ -15,4 +15,10 @@
         Center,
         Stretch
     }
+
+    public enum Orientation
+    {
+        Vertical,
+        Horizontal
+    }
 }

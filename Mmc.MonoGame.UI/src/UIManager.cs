@@ -34,7 +34,63 @@ namespace Mmc.MonoGame.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            var outerPanel = new Panel()
+            var stackPanel = new StackPanel()
+            {
+                Orientation = Orientation.Horizontal,
+                Spacing = 10,
+                Border = new Thickness(5),
+                Padding = new Thickness(5),
+                Margin = new Thickness(5),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                BackgroundBrush = new SolidBrush()
+                {
+                    Color = Color.Black
+                },
+                BorderBrush = new BorderBrush()
+                {
+                    Color = Color.Red,
+                },
+            };
+            Root.AddChild(stackPanel);
+
+            stackPanel.AddChild(new Panel()
+            {
+                Size = new Vector2(100, 50),
+                Border = new Thickness(2),
+                Padding = new Thickness(0),
+                Margin = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                BackgroundBrush = new SolidBrush()
+                {
+                    Color = Color.White
+                },
+                BorderBrush = new BorderBrush()
+                {
+                    Color = Color.Green
+                },
+            });
+
+            stackPanel.AddChild(new Panel()
+            {
+                Size = new Vector2(100, 50),
+                Border = new Thickness(2),
+                Padding = new Thickness(0),
+                Margin = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                BackgroundBrush = new SolidBrush()
+                {
+                    Color = Color.White
+                },
+                BorderBrush = new BorderBrush()
+                {
+                    Color = Color.Blue
+                },
+            });
+
+            /*var outerPanel = new Panel()
             {
                 Border = new Thickness(20),
                 Padding = new Thickness(5),
@@ -68,7 +124,7 @@ namespace Mmc.MonoGame.UI
                 {
                     Color = Color.Green
                 },
-            });
+            });*/
 
             SpriteBatch = new SpriteBatch(game.GraphicsDevice);
 
