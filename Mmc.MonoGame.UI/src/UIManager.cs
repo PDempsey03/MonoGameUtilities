@@ -12,7 +12,7 @@ namespace Mmc.MonoGame.UI
     {
         private readonly Game _game;
 
-        public UIElement Root { get; private set; }
+        public ContainerElement Root { get; private set; }
 
         public SpriteBatch SpriteBatch { get; private set; }
 

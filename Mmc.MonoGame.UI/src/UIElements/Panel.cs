@@ -4,7 +4,7 @@ using Mmc.MonoGame.UI.Primitives.Brushes;
 
 namespace Mmc.MonoGame.UI.UIElements
 {
-    public class Panel : UIElement
+    public class Panel : ContainerElement
     {
         // brushes
         public IBrush? BorderBrush { get; set; }
