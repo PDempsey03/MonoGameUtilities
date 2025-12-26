@@ -12,7 +12,7 @@ namespace Mmc.MonoGame.UI.UIElements
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            BackgroundBrush?.Draw(this, spriteBatch, GlobalBounds);
+            BackgroundBrush?.Draw(this, spriteBatch, ContentBounds);
             BorderBrush?.Draw(this, spriteBatch, GlobalBounds);
 
             base.Draw(spriteBatch);
