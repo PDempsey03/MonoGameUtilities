@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Primitives;
 using Mmc.MonoGame.UI.Primitives.Brushes;
 using Mmc.MonoGame.UI.UIElements;
@@ -55,7 +56,7 @@ namespace Mmc.MonoGame.UI.GameTests
             };
             root.AddChild(stackPanel);
 
-            stackPanel.AddChild(new Panel()
+            stackPanel.AddChild(new ContainerElement()
             {
                 Size = new Vector2(100, 50),
                 Border = new Thickness(2),
@@ -76,7 +77,7 @@ namespace Mmc.MonoGame.UI.GameTests
                 },
             });
 
-            stackPanel.AddChild(new Panel()
+            stackPanel.AddChild(new ContainerElement()
             {
                 Size = new Vector2(100, 50),
                 Border = new Thickness(2),

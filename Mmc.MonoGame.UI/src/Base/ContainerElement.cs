@@ -34,6 +34,8 @@ namespace Mmc.MonoGame.UI.Base
 
         public override void Draw(SpriteBatch spriteBatch)
         {
+            base.Draw(spriteBatch);
+
             for (int i = 0; i < Children.Count; i++)
             {
                 Children[i].Draw(spriteBatch);

@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Primitives;
-using Mmc.MonoGame.UI.UIElements;
 using System.Diagnostics;
 
 namespace Mmc.MonoGame.UI
@@ -27,7 +26,7 @@ namespace Mmc.MonoGame.UI
             _game = game;
 
             // root should be a plain background panel that anything can be placed into
-            Root = new Panel()
+            Root = new ContainerElement()
             {
                 HorizontalAlignment = HorizontalAlignment.Stretch,
                 VerticalAlignment = VerticalAlignment.Stretch,

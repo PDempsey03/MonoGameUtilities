@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Primitives;
+using Mmc.MonoGame.UI.Primitives.Brushes;
 
 namespace Mmc.MonoGame.UI.Base
 {
@@ -10,6 +11,7 @@ namespace Mmc.MonoGame.UI.Base
         protected Vector2 _offset = Vector2.Zero;
         protected Vector2 _size = Vector2.Zero;
         protected Rectangle _globalBounds;
+        protected Rectangle _backgroundBounds;
         protected Rectangle _contentBounds;
 
         // transform
@@ -43,6 +45,7 @@ namespace Mmc.MonoGame.UI.Base
 
         // bounds
         public Rectangle GlobalBounds => _globalBounds;
+        public Rectangle BackgroundBounds => _backgroundBounds;
         public Rectangle ContentBounds => _contentBounds;
 
         // layout
@@ -52,13 +55,21 @@ namespace Mmc.MonoGame.UI.Base
         public Thickness Padding { get; set; }
         public Thickness Border { get; set; }
 
+        // brushes
+        public IBrush? BorderBrush { get; set; }
+        public IBrush? BackgroundBrush { get; set; }
+
         // hierarchy
         public UIElement? Parent { get; protected internal set; }
         public bool IsLayoutDirty { get => _isLayoutDirty; private set => _isLayoutDirty = value; }
 
         public abstract void Update(GameTime gameTime);
 
-        public abstract void Draw(SpriteBatch spriteBatch);
+        public virtual void Draw(SpriteBatch spriteBatch)
+        {
+            BackgroundBrush?.Draw(this, spriteBatch, BackgroundBounds);
+            BorderBrush?.Draw(this, spriteBatch, GlobalBounds);
+        }
 
         public virtual void Measure(Vector2 availableSize)
         {
@@ -80,7 +91,13 @@ namespace Mmc.MonoGame.UI.Base
 
         public virtual void Arrange(Rectangle finalRect)
         {
-            CalculateGlobalBounds(finalRect);
+            CalculateAllBounds(finalRect);
+        }
+
+        protected void CalculateAllBounds(Rectangle parentContentBounds)
+        {
+            CalculateGlobalBounds(parentContentBounds);
+            CalculateBackgroundBounds();
             CalculateContentBounds();
         }
 
@@ -92,6 +109,17 @@ namespace Mmc.MonoGame.UI.Base
                 parentContentBounds.Y + (int)Margin.Top,
                 parentContentBounds.Width - (int)(Margin.Left + Margin.Right),
                 parentContentBounds.Height - (int)(Margin.Top + Margin.Bottom)
+            );
+        }
+
+        protected virtual void CalculateBackgroundBounds()
+        {
+            // background bounds is the global bounds without the border
+            _backgroundBounds = new Rectangle(
+                _globalBounds.X + (int)Border.Left,
+                _globalBounds.Y + (int)Border.Top,
+                Math.Max(0, _globalBounds.Width - (int)(Border.Left + Border.Right)),
+                Math.Max(0, _globalBounds.Height - (int)(Border.Top + Border.Bottom))
             );
         }
 

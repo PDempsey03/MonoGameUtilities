@@ -1,9 +1,10 @@
 ﻿using Microsoft.Xna.Framework;
+using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Primitives;
 
 namespace Mmc.MonoGame.UI.UIElements
 {
-    public class StackPanel : Panel
+    public class StackPanel : ContainerElement
     {
         public Orientation Orientation { get; set; } = Orientation.Vertical;
 
@@ -78,8 +79,7 @@ namespace Mmc.MonoGame.UI.UIElements
 
         public override void Arrange(Rectangle finalRect)
         {
-            CalculateGlobalBounds(finalRect);
-            CalculateContentBounds();
+            base.Arrange(finalRect);
 
             // place children linearly
             float currentOffset = 0;
