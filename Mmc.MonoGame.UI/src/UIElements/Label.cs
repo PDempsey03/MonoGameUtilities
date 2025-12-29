@@ -68,7 +68,7 @@ namespace Mmc.MonoGame.UI.UIElements
                 return;
             }
 
-            _runs = TextParser.ParseText(Text, FontFamily);
+            _runs = TextParser.ParseText(Text, FontFamily, TextColor);
 
             float totalWidth = 0;
             float maxHeight = 0;

@@ -87,7 +87,7 @@ namespace Mmc.MonoGame.UI.GameTests
 
             stackPanel.AddChild(new Label()
             {
-                Text = "[b]bold[/b] [i]italic[/i] [b][i]bolditalic[/b][/i] [u]underlined[/u]",
+                Text = "[c=blue][b]bold[/b][/c] [c=#ff00ea][i]italic[/i][/c] [c=97,230,225][b][i]bolditalic[/b][/i][/c] [u]underlined[/u]",
                 FontFamily = fontFamily,
                 TextColor = Color.Green,
                 Border = new Thickness(2),

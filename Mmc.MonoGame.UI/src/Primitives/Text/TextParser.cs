@@ -1,12 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Globalization;
+using System.Reflection;
 using System.Text;
 
 namespace Mmc.MonoGame.UI.Primitives.Text
 {
     public static class TextParser
     {
-        public static TextRun[] ParseText(string text, FontFamily fontFamily)
+        public static TextRun[] ParseText(string text, FontFamily fontFamily, Color defaultColor)
         {
             var runs = new List<TextRun>();
 
@@ -16,7 +18,7 @@ namespace Mmc.MonoGame.UI.Primitives.Text
             bool isBold = false;
             bool isItalic = false;
             bool isUnderlined = false;
-            Color color = Color.White;
+            Color currentColor = defaultColor;
 
             for (int i = 0; i < text.Length; i++)
             {
@@ -46,7 +48,7 @@ namespace Mmc.MonoGame.UI.Primitives.Text
                             {
                                 Text = displayText,
                                 Font = selectedFont,
-                                Color = color,
+                                Color = currentColor,
                                 IsUnderlined = isUnderlined,
                                 Size = selectedFont.MeasureString(displayText)
                             });
@@ -59,10 +61,18 @@ namespace Mmc.MonoGame.UI.Primitives.Text
                         {
                             case "b": isBold = true; break;
                             case "/b": isBold = false; break;
+
                             case "i": isItalic = true; break;
                             case "/i": isItalic = false; break;
+
                             case "u": isUnderlined = true; break;
                             case "/u": isUnderlined = false; break;
+
+                            case string colorData when colorData.StartsWith("c="):
+                                if (!TryParseColor(colorData[2..], out currentColor))
+                                    currentColor = defaultColor;
+                                break;
+                            case "/c": currentColor = defaultColor; break;
                         }
 
                         i = closingBracketIndex;
@@ -81,13 +91,62 @@ namespace Mmc.MonoGame.UI.Primitives.Text
                 {
                     Text = displayText,
                     Font = selectedFont,
-                    Color = color,
+                    Color = currentColor,
                     IsUnderlined = isUnderlined,
                     Size = selectedFont.MeasureString(displayText)
                 });
             }
 
             return runs.ToArray();
+        }
+
+        public static bool TryParseColor(string value, out Color color)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                color = default;
+                return false;
+            }
+
+            // handle hex
+            if (value.StartsWith('#'))
+            {
+                if (uint.TryParse(value.Replace("#", ""), NumberStyles.HexNumber, null, out uint rgba))
+                {
+                    color = new Color(rgba);
+                    return true;
+                }
+            }
+
+            // handle rgb
+            if (value.Contains(','))
+            {
+                var parts = value.Split(',');
+                if (parts.Length == 3 &&
+                    byte.TryParse(parts[0], out byte r) &&
+                    byte.TryParse(parts[1], out byte g) &&
+                    byte.TryParse(parts[2], out byte b))
+                {
+                    color = new Color(r, g, b);
+                    return true;
+                }
+                else
+                {
+                    color = default;
+                    return false;
+                }
+            }
+
+            // handle names
+            var possibleColorProperty = typeof(Color).GetProperty(value, BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+            if (possibleColorProperty != null && possibleColorProperty.PropertyType == typeof(Color))
+            {
+                color = (Color)possibleColorProperty.GetValue(null)!;
+                return true;
+            }
+
+            color = default;
+            return false;
         }
     }
 }
