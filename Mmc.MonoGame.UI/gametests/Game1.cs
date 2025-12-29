@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Input;
 using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Primitives;
 using Mmc.MonoGame.UI.Primitives.Brushes;
+using Mmc.MonoGame.UI.Primitives.Text;
 using Mmc.MonoGame.UI.UIElements;
 
 namespace Mmc.MonoGame.UI.GameTests
@@ -38,7 +39,7 @@ namespace Mmc.MonoGame.UI.GameTests
 
             var stackPanel = new StackPanel()
             {
-                Orientation = Orientation.Horizontal,
+                Orientation = Orientation.Vertical,
                 Spacing = 10,
                 Border = new Thickness(5),
                 Padding = new Thickness(5),
@@ -58,7 +59,7 @@ namespace Mmc.MonoGame.UI.GameTests
 
             stackPanel.AddChild(new ContainerElement()
             {
-                Size = new Vector2(100, 50),
+                Size = new Vector2(300, 100),
                 Border = new Thickness(2),
                 Padding = new Thickness(0),
                 Margin = new Thickness(0),
@@ -77,59 +78,32 @@ namespace Mmc.MonoGame.UI.GameTests
                 },
             });
 
-            stackPanel.AddChild(new ContainerElement()
+            FontFamily fontFamily = new FontFamily(Content.Load<SpriteFont>("TestFont_Regular"))
             {
-                Size = new Vector2(100, 50),
+                Bold = Content.Load<SpriteFont>("TestFont_Bold"),
+                BoldItalic = Content.Load<SpriteFont>("TestFont_BoldItalic"),
+                Italic = Content.Load<SpriteFont>("TestFont_Italic"),
+            };
+
+            stackPanel.AddChild(new Label()
+            {
+                Text = "[b]bold[/b] [i]italic[/i] [b][i]bolditalic[/b][/i] [u]underlined[/u]",
+                FontFamily = fontFamily,
+                TextColor = Color.Green,
                 Border = new Thickness(2),
-                Padding = new Thickness(0),
+                Padding = new Thickness(5, 0),
                 Margin = new Thickness(0),
-                HorizontalAlignment = HorizontalAlignment.Left,
+                HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
                 BackgroundBrush = new SolidBrush()
                 {
-                    Color = Color.White
+                    Color = Color.Brown
                 },
                 BorderBrush = new BorderBrush()
                 {
                     Color = Color.Blue
                 },
             });
-
-            /*var outerPanel = new Panel()
-            {
-                Border = new Thickness(20),
-                Padding = new Thickness(5),
-                Margin = new Thickness(5),
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Bottom,
-                BackgroundBrush = new SolidBrush()
-                {
-                    Color = Color.Gray
-                },
-                BorderBrush = new BorderBrush()
-                {
-                    Color = Color.Red,
-                },
-            };
-            root.AddChild(outerPanel);
-
-            outerPanel.AddChild(new Panel()
-            {
-                Size = new Vector2(10, 10),
-                Border = new Thickness(2),
-                Padding = new Thickness(0),
-                Margin = new Thickness(5),
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Top,
-                BackgroundBrush = new SolidBrush()
-                {
-                    Color = Color.Black
-                },
-                BorderBrush = new BorderBrush()
-                {
-                    Color = Color.Green
-                },
-            });*/
         }
 
         protected override void Update(GameTime gameTime)

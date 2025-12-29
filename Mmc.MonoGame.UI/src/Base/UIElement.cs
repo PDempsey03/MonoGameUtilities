@@ -71,14 +71,21 @@ namespace Mmc.MonoGame.UI.Base
             BorderBrush?.Draw(this, spriteBatch, GlobalBounds);
         }
 
+        /// <summary>
+        /// Assign DesiredSize to the desired size of the entire element, including margins, border, padding, and any internal content
+        /// </summary>
+        /// <param name="availableSize">how much size could be given</param>
         public virtual void Measure(Vector2 availableSize)
         {
             float marginWidth = Margin.Left + Margin.Right;
             float marginHeight = Margin.Top + Margin.Bottom;
 
+            float internalWidth = Border.Left + Border.Right + Padding.Left + Padding.Right;
+            float internalHeight = Border.Top + Border.Bottom + Padding.Top + Padding.Bottom;
+
             // if user specified a specific size, use that size, otherwise default to 0 which will use auto sizing
-            float bodyWidth = (Size.X > 0) ? Size.X : 0;
-            float bodyHeight = (Size.Y > 0) ? Size.Y : 0;
+            float bodyWidth = (Size.X > 0) ? Size.X : internalWidth;
+            float bodyHeight = (Size.Y > 0) ? Size.Y : internalHeight;
 
             // set the desired size representing the its size (content, padding, and border) with its margins to encapsulate its true desired size
             DesiredSize = new Vector2(
@@ -103,13 +110,37 @@ namespace Mmc.MonoGame.UI.Base
 
         protected virtual void CalculateGlobalBounds(Rectangle parentContentBounds)
         {
-            // global bounds is simply the given bounds without the margins
-            _globalBounds = new Rectangle(
+            // slot is simply the given bounds without the margins
+            Rectangle slot = new Rectangle(
                 parentContentBounds.X + (int)Margin.Left,
                 parentContentBounds.Y + (int)Margin.Top,
                 parentContentBounds.Width - (int)(Margin.Left + Margin.Right),
                 parentContentBounds.Height - (int)(Margin.Top + Margin.Bottom)
             );
+
+            // dont need to use the entirety of the bounds we're given, so may scale down to what is needed
+
+            int width = (HorizontalAlignment == HorizontalAlignment.Stretch)
+                ? slot.Width
+                : (int)DesiredSize.X - (int)(Margin.Left + Margin.Right);
+
+            int height = (VerticalAlignment == VerticalAlignment.Stretch)
+                 ? slot.Height
+                 : (int)DesiredSize.Y - (int)(Margin.Top + Margin.Bottom);
+
+            int x = slot.X;
+            if (HorizontalAlignment == HorizontalAlignment.Center)
+                x += (slot.Width - width) / 2;
+            else if (HorizontalAlignment == HorizontalAlignment.Right)
+                x += slot.Width - width;
+
+            int y = slot.Y;
+            if (VerticalAlignment == VerticalAlignment.Center)
+                y += (slot.Height - height) / 2;
+            else if (VerticalAlignment == VerticalAlignment.Bottom)
+                y += slot.Height - height;
+
+            _globalBounds = new Rectangle(x, y, Math.Max(0, width), Math.Max(0, height));
         }
 
         protected virtual void CalculateBackgroundBounds()
