@@ -105,9 +105,10 @@ namespace Mmc.MonoGame.UI.UIElements
             float totalWidth = 0;
             float maxHeight = 0;
 
-            float marginsX = Margin.Left + Margin.Right;
-            float bordersX = Border.Left + Border.Right;
-            float paddingX = Padding.Left + Padding.Right;
+            float marginsX = Margin.Horizontal;
+            float bordersX = Border.Horizontal;
+            float paddingX = Padding.Horizontal;
+            ;
 
             if (Wrap)
             {
@@ -146,9 +147,7 @@ namespace Mmc.MonoGame.UI.UIElements
             }
             else
             {
-                float marginHeight = Margin.Top + Margin.Bottom;
-                float internalHeight = Border.Top + Border.Bottom + Padding.Top + Padding.Bottom;
-                finalHeight = marginHeight + internalHeight + maxHeight;
+                finalHeight = Margin.Vertical + Border.Vertical + Padding.Vertical + maxHeight;
             }
 
             DesiredSize = new Vector2(finalWidth, finalHeight);

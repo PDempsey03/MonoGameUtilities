@@ -12,11 +12,11 @@ namespace Mmc.MonoGame.UI.UIElements
 
         public override void Measure(Vector2 availableSize)
         {
-            float marginWidth = Margin.Left + Margin.Right;
-            float marginHeight = Margin.Top + Margin.Bottom;
+            float marginWidth = Margin.Horizontal;
+            float marginHeight = Margin.Vertical;
 
-            float internalWidth = Border.Left + Border.Right + Padding.Left + Padding.Right;
-            float internalHeight = Border.Top + Border.Bottom + Padding.Top + Padding.Bottom;
+            float internalWidth = Border.Horizontal + Padding.Horizontal;
+            float internalHeight = Border.Vertical + Padding.Vertical;
 
             float bodyWidth = (Size.X > 0) ? Size.X : 0;
             float bodyHeight = (Size.Y > 0) ? Size.Y : 0;

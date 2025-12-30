@@ -6,6 +6,10 @@
 
         public float Left, Top, Right, Bottom;
 
+        public readonly float Horizontal => Left + Right;
+
+        public readonly float Vertical => Top + Bottom;
+
         public Thickness(float all)
         {
             Left = Top = Right = Bottom = all;

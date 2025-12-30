@@ -59,11 +59,11 @@ namespace Mmc.MonoGame.UI.Base
 
         public override void Measure(Vector2 availableSize)
         {
-            float marginWidth = Margin.Left + Margin.Right;
-            float marginHeight = Margin.Top + Margin.Bottom;
+            float marginWidth = Margin.Horizontal;
+            float marginHeight = Margin.Vertical;
 
-            float internalWidth = Border.Left + Border.Right + Padding.Left + Padding.Right;
-            float internalHeight = Border.Top + Border.Bottom + Padding.Top + Padding.Bottom;
+            float internalWidth = Border.Horizontal + Padding.Horizontal;
+            float internalHeight = Border.Vertical + Padding.Vertical;
 
             // if user specified a specific size, use that size, otherwise default to 0 which will use auto sizing
             float bodyWidth = (Size.X > 0) ? Size.X : 0;

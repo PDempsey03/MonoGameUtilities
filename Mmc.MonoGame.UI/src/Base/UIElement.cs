@@ -77,11 +77,11 @@ namespace Mmc.MonoGame.UI.Base
         /// <param name="availableSize">how much size could be given</param>
         public virtual void Measure(Vector2 availableSize)
         {
-            float marginWidth = Margin.Left + Margin.Right;
-            float marginHeight = Margin.Top + Margin.Bottom;
+            float marginWidth = Margin.Horizontal;
+            float marginHeight = Margin.Vertical;
 
-            float internalWidth = Border.Left + Border.Right + Padding.Left + Padding.Right;
-            float internalHeight = Border.Top + Border.Bottom + Padding.Top + Padding.Bottom;
+            float internalWidth = Border.Horizontal + Padding.Horizontal;
+            float internalHeight = Border.Vertical + Padding.Vertical;
 
             // if user specified a specific size, use that size, otherwise default to 0 which will use auto sizing
             float bodyWidth = (Size.X > 0) ? Size.X : internalWidth;
@@ -114,19 +114,19 @@ namespace Mmc.MonoGame.UI.Base
             Rectangle slot = new Rectangle(
                 parentContentBounds.X + (int)Margin.Left,
                 parentContentBounds.Y + (int)Margin.Top,
-                parentContentBounds.Width - (int)(Margin.Left + Margin.Right),
-                parentContentBounds.Height - (int)(Margin.Top + Margin.Bottom)
+                parentContentBounds.Width - (int)Margin.Horizontal,
+                parentContentBounds.Height - (int)Margin.Vertical
             );
 
             // dont need to use the entirety of the bounds we're given, so may scale down to what is needed
 
             int width = (HorizontalAlignment == HorizontalAlignment.Stretch)
                 ? slot.Width
-                : (int)DesiredSize.X - (int)(Margin.Left + Margin.Right);
+                : (int)DesiredSize.X - (int)Margin.Horizontal;
 
             int height = (VerticalAlignment == VerticalAlignment.Stretch)
                  ? slot.Height
-                 : (int)DesiredSize.Y - (int)(Margin.Top + Margin.Bottom);
+                 : (int)DesiredSize.Y - (int)Margin.Vertical;
 
             int x = slot.X;
             if (HorizontalAlignment == HorizontalAlignment.Center)
