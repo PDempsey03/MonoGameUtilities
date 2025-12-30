@@ -87,8 +87,11 @@ namespace Mmc.MonoGame.UI.GameTests
 
             stackPanel.AddChild(new Label()
             {
-                Text = "[c=blue][b]bold[/b][/c] [c=#ff00ea][i]italic[/i][/c] [c=97,230,225][b][i]bolditalic[/b][/i][/c] [u]underlined[/u]",
+                Text = "[c=blue][b]bold[/b][/c] [c=#ff00ea][i]italic[/i][/c] [c=97,230,225][b][i]bolditalic[/b][/i][/c] [u]underlined[/u] " +
+                "and we built this city on rock and roll! + rock on donkey kong we need to make this as long as mutua [b]ps si[/b]blessssss uWHBFEIUBFOIWBybwubnvihaerbjhabrvhjkuaburabvureabvueb",
                 FontFamily = fontFamily,
+                Wrap = true,
+                Size = new Vector2(200, 0),
                 TextColor = Color.Green,
                 Border = new Thickness(2),
                 Padding = new Thickness(5, 0),

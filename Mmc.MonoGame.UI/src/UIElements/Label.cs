@@ -7,7 +7,9 @@ namespace Mmc.MonoGame.UI.UIElements
 {
     public class Label : UIElement
     {
-        private TextRun[] _runs = [];
+        private List<MeasuredWord> _words = [];
+        private bool _wrap = false;
+        private Color _color = Color.White;
 
         protected string _text = string.Empty;
 
@@ -24,9 +26,33 @@ namespace Mmc.MonoGame.UI.UIElements
             }
         }
 
-        public FontFamily FontFamily { get; set; }
+        public FontFamily? FontFamily { get; set; }
 
-        public Color TextColor { get; set; } = Color.White;
+        public Color TextColor
+        {
+            get => _color;
+            set
+            {
+                if (_color != value)
+                {
+                    _color = value;
+                    MarkDirty();
+                }
+            }
+        }
+
+        public bool Wrap
+        {
+            get => _wrap;
+            set
+            {
+                if (_wrap != value)
+                {
+                    _wrap = value;
+                    MarkDirty();
+                }
+            }
+        }
 
         public override void Update(GameTime gameTime)
         {
@@ -41,22 +67,26 @@ namespace Mmc.MonoGame.UI.UIElements
 
             Vector2 textPosition = ContentBounds.Location.ToVector2(); // top left of the content area
 
-            foreach (var run in _runs)
+            foreach (var run in _words)
             {
-                spriteBatch.DrawString(run.Font, run.Text, textPosition, run.Color);
-
-                if (run.IsUnderlined)
+                foreach (var segment in run.Segments)
                 {
-                    const int Thickness = 1;
+                    var segmentOffset = textPosition + segment.PositionOffset;
 
-                    Vector2 start = new Vector2(textPosition.X, textPosition.Y + run.Size.Y - Thickness);
+                    spriteBatch.DrawString(segment.Font, segment.Text, segmentOffset, segment.Color);
 
-                    Vector2 end = start + new Vector2(run.Size.X, 0);
+                    if (segment.IsUnderlined)
+                    {
+                        const int Thickness = 1;
 
-                    Drawer.DrawLine(spriteBatch, start, end, Color.White, Thickness);
+                        Vector2 start = new Vector2(segmentOffset.X, segmentOffset.Y + segment.Size.Y - Thickness);
+
+                        Vector2 end = start + new Vector2(segment.Size.X, 0);
+
+                        Drawer.DrawLine(spriteBatch, start, end, Color.White, Thickness);
+                    }
                 }
 
-                textPosition.X += run.Size.X;
             }
         }
 
@@ -68,16 +98,36 @@ namespace Mmc.MonoGame.UI.UIElements
                 return;
             }
 
-            _runs = TextParser.ParseText(Text, FontFamily, TextColor);
+            var parsedText = TextLayoutProcessor.ParseText(Text, FontFamily, TextColor);
+
+            var words = TextLayoutProcessor.TokenizeTextRunSegments(parsedText);
 
             float totalWidth = 0;
             float maxHeight = 0;
 
-            foreach (var run in _runs)
+            float marginsX = Margin.Left + Margin.Right;
+            float bordersX = Border.Left + Border.Right;
+            float paddingX = Padding.Left + Padding.Right;
+
+            if (Wrap)
             {
-                totalWidth += run.Size.X;
-                maxHeight = MathF.Max(maxHeight, run.Size.Y);
+                Vector2 wrappedSize = TextLayoutProcessor.WrapWords(words, (Size.X > 0 ? Size.X : availableSize.X) - (marginsX + bordersX + paddingX));
+                totalWidth = wrappedSize.X;
+                maxHeight = wrappedSize.Y;
             }
+            else
+            {
+                foreach (var run in words)
+                {
+                    foreach (var segment in run.Segments)
+                    {
+                        totalWidth += segment.Size.X;
+                        maxHeight = MathF.Max(maxHeight, segment.Size.Y);
+                    }
+                }
+            }
+
+            _words = words;
 
             float finalWidth;
             float finalHeight;
@@ -87,9 +137,7 @@ namespace Mmc.MonoGame.UI.UIElements
             }
             else
             {
-                float marginWidth = Margin.Left + Margin.Right;
-                float internalWidth = Border.Left + Border.Right + Padding.Left + Padding.Right;
-                finalWidth = marginWidth + internalWidth + totalWidth;
+                finalWidth = marginsX + bordersX + paddingX + totalWidth;
             }
 
             if (Size.Y > 0)
