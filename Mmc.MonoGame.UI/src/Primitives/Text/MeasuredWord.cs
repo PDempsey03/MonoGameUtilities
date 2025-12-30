@@ -4,8 +4,8 @@
     {
         public List<TextRunSegment> Segments { get; init; } = [];
 
-        public float Width { get; set; }
+        public float Width => Segments.Sum(s => s.Font.MeasureString(s.Text).X);
 
-        public float Height { get; set; }
+        public float Height => Segments.Max(s => s.Font.MeasureString(s.Text).Y);
     }
 }

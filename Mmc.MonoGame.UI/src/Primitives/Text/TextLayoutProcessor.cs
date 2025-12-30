@@ -143,8 +143,6 @@ namespace Mmc.MonoGame.UI.Primitives.Text
                     };
 
                     currentWord.Segments.Add(newSegment);
-                    currentWord.Width += newSegment.Size.X;
-                    currentWord.Height = Math.Max(currentWord.Height, newSegment.Size.Y);
 
                     if (!isLastPart)
                     {
@@ -168,6 +166,7 @@ namespace Mmc.MonoGame.UI.Primitives.Text
         /// <returns>Size of the resulting wrap.</returns>
         public static Vector2 WrapWords(List<MeasuredWord> words, float maxWidth)
         {
+            // cursor keeps track of where the next character should be placed
             Vector2 cursor = Vector2.Zero;
             float currentLineHeight = 0;
             float maxSeenWidth = 0;
@@ -175,7 +174,11 @@ namespace Mmc.MonoGame.UI.Primitives.Text
             for (int i = 0; i < words.Count; i++)
             {
                 var word = words[i];
-                if (cursor.X + word.Width > maxWidth && cursor.X > 0)
+
+                var wordWidth = word.Width;
+
+                // if the word cant fit, move the cursor down to the next line
+                if (cursor.X + wordWidth > maxWidth && cursor.X > 0)
                 {
                     maxSeenWidth = Math.Max(maxSeenWidth, cursor.X);
                     cursor.X = 0;
@@ -186,59 +189,16 @@ namespace Mmc.MonoGame.UI.Primitives.Text
                 var segments = word.Segments;
 
                 // edge case if word is too large to fit on one line
-                if (word.Width > maxWidth)
+                if (wordWidth > maxWidth)
                 {
-                    for (int j = 0; j < segments.Count; j++)
-                    {
-                        var segment = segments[j];
-
-                        currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
-
-                        for (int k = 0; k < segment.Text.Length; k++)
-                        {
-                            char c = segment.Text[k];
-                            float charWidth = segment.Font.MeasureString(c.ToString()).X;
-
-                            // if this character crosses border, then take the previous component and make
-                            if (cursor.X + charWidth > maxWidth && cursor.X > 0)
-                            {
-                                maxSeenWidth = Math.Max(maxSeenWidth, cursor.X);
-                                cursor.X = 0;
-
-                                string firstHalfText = segment.Text.Substring(0, k);
-                                string secondHalfText = segment.Text.Substring(k);
-
-                                segment.PositionOffset = cursor;
-                                segment.Text = firstHalfText;
-                                segment.Size = segment.Font.MeasureString(segment.Text);
-                                segments[j] = segment;
-
-                                cursor.Y += currentLineHeight;
-
-                                SpriteFont newFont = segment.Font;
-                                TextRunSegment secondHalfSplitSegment = new TextRunSegment()
-                                {
-                                    Text = secondHalfText,
-                                    Font = segment.Font,
-                                    Color = segment.Color,
-                                    IsUnderlined = segment.IsUnderlined,
-                                    PositionOffset = cursor,
-                                    Size = newFont.MeasureString(secondHalfText)
-                                };
-                                segments.Insert(j + 1, secondHalfSplitSegment);
-
-                                break;
-                            }
-
-                            cursor.X += charWidth;
-                        }
-                    }
+                    HandleWrapLargeWord(word, maxWidth, cursor, maxSeenWidth, out cursor, out maxSeenWidth);
                 }
                 else
                 {
                     for (int j = 0; j < segments.Count; j++)
                     {
                         var segment = segments[j];
+                        // update the offset of the segment to where the cursor currently is which is where the next character should go
                         segment.PositionOffset = cursor;
                         segments[j] = segment;
 
@@ -249,7 +209,89 @@ namespace Mmc.MonoGame.UI.Primitives.Text
             }
 
             maxSeenWidth = Math.Max(maxSeenWidth, cursor.X);
+
+            // returns how much space was taken up
             return new Vector2(maxSeenWidth, cursor.Y + currentLineHeight);
+        }
+
+        /// <summary>
+        /// Handles breaking up of large words which need wrapped.
+        /// </summary>
+        /// <param name="measuredWord">word to break up and wrap.</param>
+        /// <param name="maxWidth">max width to take up.</param>
+        /// <param name="cursor">where the cursor started.</param>
+        /// <param name="maxSeenWidth">largest width seen so far.</param>
+        /// <param name="newCursorPosition">cursor position at the end of the wrap.</param>
+        /// <param name="newMaxSeenWidth">max seen width at the end of the wrap.</param>
+        private static void HandleWrapLargeWord(MeasuredWord measuredWord, float maxWidth, Vector2 cursor, float maxSeenWidth, out Vector2 newCursorPosition, out float newMaxSeenWidth)
+        {
+            var segments = measuredWord.Segments;
+            float currentLineHeight = 0;
+
+            // loop through all segments to accumulate their characters
+            for (int j = 0; j < segments.Count; j++)
+            {
+                var segment = segments[j];
+
+                currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
+
+                for (int k = 0; k < segment.Text.Length; k++)
+                {
+                    // find width of the current character
+                    char c = segment.Text[k];
+                    float charWidth = segment.Font.MeasureString(c.ToString()).X;
+
+                    // if this character makes it cross the max width, then everything before it in the segment can stay on the same line
+                    // and everything after it must be moved down to the next line
+                    if (cursor.X + charWidth > maxWidth && cursor.X > 0)
+                    {
+                        maxSeenWidth = Math.Max(maxSeenWidth, cursor.X);
+                        cursor.X = 0;
+
+                        // text for the new segments
+                        string firstHalfText = segment.Text.Substring(0, k);
+                        string secondHalfText = segment.Text.Substring(k);
+
+                        // update the existing segment to keep the first half
+                        segment.PositionOffset = cursor;
+                        segment.Text = firstHalfText;
+                        segment.Size = segment.Font.MeasureString(segment.Text);
+                        segments[j] = segment;
+
+                        // update the cursor for the second half of the segment
+                        cursor.Y += currentLineHeight;
+
+                        // create new segment to reprsent the second half of the sement
+                        SpriteFont newFont = segment.Font;
+                        TextRunSegment secondHalfSplitSegment = new TextRunSegment()
+                        {
+                            Text = secondHalfText,
+                            Font = segment.Font,
+                            Color = segment.Color,
+                            IsUnderlined = segment.IsUnderlined,
+                            PositionOffset = cursor,
+                            Size = newFont.MeasureString(secondHalfText)
+                        };
+
+                        // add the segment to the list
+                        segments.Insert(j + 1, secondHalfSplitSegment);
+
+                        // break out of the character loop, because it will then move on to the next segment (the second half segment) and perform the
+                        // same operations on it, which is how multiple splits of the same word are handled
+                        break;
+                    }
+
+                    // always move the cursor over one after a character doesnt cause a new line
+                    cursor.X += charWidth;
+                }
+            }
+
+
+            // update the outgoing variable values
+            newMaxSeenWidth = maxSeenWidth;
+
+            cursor.Y += currentLineHeight;
+            newCursorPosition = cursor;
         }
 
         /// <summary>
