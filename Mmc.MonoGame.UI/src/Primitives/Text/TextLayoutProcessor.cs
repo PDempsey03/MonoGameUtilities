@@ -169,39 +169,86 @@ namespace Mmc.MonoGame.UI.Primitives.Text
         public static Vector2 WrapWords(List<MeasuredWord> words, float maxWidth)
         {
             Vector2 cursor = Vector2.Zero;
-
             float currentLineHeight = 0;
             float maxSeenWidth = 0;
 
-            foreach (var word in words)
+            for (int i = 0; i < words.Count; i++)
             {
+                var word = words[i];
                 if (cursor.X + word.Width > maxWidth && cursor.X > 0)
                 {
                     maxSeenWidth = Math.Max(maxSeenWidth, cursor.X);
-
                     cursor.X = 0;
                     cursor.Y += currentLineHeight;
-
                     currentLineHeight = 0;
                 }
 
                 var segments = word.Segments;
 
-                for (int i = 0; i < segments.Count; i++)
+                // edge case if word is too large to fit on one line
+                if (word.Width > maxWidth)
                 {
-                    var segment = segments[i];
-                    segment.PositionOffset = cursor;
-                    segments[i] = segment;
+                    for (int j = 0; j < segments.Count; j++)
+                    {
+                        var segment = segments[j];
 
-                    cursor.X += segment.Size.X;
+                        currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
 
-                    currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
+                        for (int k = 0; k < segment.Text.Length; k++)
+                        {
+                            char c = segment.Text[k];
+                            float charWidth = segment.Font.MeasureString(c.ToString()).X;
+
+                            // if this character crosses border, then take the previous component and make
+                            if (cursor.X + charWidth > maxWidth && cursor.X > 0)
+                            {
+                                maxSeenWidth = Math.Max(maxSeenWidth, cursor.X);
+                                cursor.X = 0;
+
+                                string firstHalfText = segment.Text.Substring(0, k);
+                                string secondHalfText = segment.Text.Substring(k);
+
+                                segment.PositionOffset = cursor;
+                                segment.Text = firstHalfText;
+                                segment.Size = segment.Font.MeasureString(segment.Text);
+                                segments[j] = segment;
+
+                                cursor.Y += currentLineHeight;
+
+                                SpriteFont newFont = segment.Font;
+                                TextRunSegment secondHalfSplitSegment = new TextRunSegment()
+                                {
+                                    Text = secondHalfText,
+                                    Font = segment.Font,
+                                    Color = segment.Color,
+                                    IsUnderlined = segment.IsUnderlined,
+                                    PositionOffset = cursor,
+                                    Size = newFont.MeasureString(secondHalfText)
+                                };
+                                segments.Insert(j + 1, secondHalfSplitSegment);
+
+                                break;
+                            }
+
+                            cursor.X += charWidth;
+                        }
+                    }
+                }
+                else
+                {
+                    for (int j = 0; j < segments.Count; j++)
+                    {
+                        var segment = segments[j];
+                        segment.PositionOffset = cursor;
+                        segments[j] = segment;
+
+                        cursor.X += segment.Size.X;
+                        currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
+                    }
                 }
             }
 
-            // finalize max seen width
             maxSeenWidth = Math.Max(maxSeenWidth, cursor.X);
-
             return new Vector2(maxSeenWidth, cursor.Y + currentLineHeight);
         }
 
