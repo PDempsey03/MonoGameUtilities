@@ -1,8 +1,9 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
+using Mmc.MonoGame.UI.Models.Primitives;
 
-namespace Mmc.MonoGame.UI.Primitives.Brushes
+namespace Mmc.MonoGame.UI.Models.Brushes
 {
     public class TextureBrush : SolidBrush
     {
@@ -91,12 +92,12 @@ namespace Mmc.MonoGame.UI.Primitives.Brushes
             int s = EdgeSize;
 
             // size of the source middle piece
-            int middleSourceWidth = sourceRectangle.Width - (2 * s);
-            int middleSourceHeight = sourceRectangle.Height - (2 * s);
+            int middleSourceWidth = sourceRectangle.Width - 2 * s;
+            int middleSourceHeight = sourceRectangle.Height - 2 * s;
 
             // size of the destination middle piece
-            int middleDestinationWidth = destinationRectangle.Width - (2 * s);
-            int middleDestinationHeight = destinationRectangle.Height - (2 * s);
+            int middleDestinationWidth = destinationRectangle.Width - 2 * s;
+            int middleDestinationHeight = destinationRectangle.Height - 2 * s;
 
             // top left
             DrawNineSliceSegment(spriteBatch,

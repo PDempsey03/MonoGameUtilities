@@ -1,10 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Mmc.MonoGame.UI.Models.Primitives;
+using Mmc.MonoGame.UI.Models.Text;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
 
-namespace Mmc.MonoGame.UI.Primitives.Text
+namespace Mmc.MonoGame.UI.Systems.Text
 {
     public static class TextLayoutProcessor
     {

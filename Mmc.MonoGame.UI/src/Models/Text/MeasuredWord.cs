@@ -1,4 +1,4 @@
-﻿namespace Mmc.MonoGame.UI.Primitives.Text
+﻿namespace Mmc.MonoGame.UI.Models.Text
 {
     public sealed class MeasuredWord
     {

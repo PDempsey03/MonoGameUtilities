@@ -2,7 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
 
-namespace Mmc.MonoGame.UI.Primitives.Brushes
+namespace Mmc.MonoGame.UI.Models.Brushes
 {
     public class BorderBrush : SolidBrush
     {

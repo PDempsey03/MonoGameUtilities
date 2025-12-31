@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Mmc.MonoGame.UI.Primitives;
+using Mmc.MonoGame.UI.Models.Primitives;
 
 namespace Mmc.MonoGame.UI.Base
 {

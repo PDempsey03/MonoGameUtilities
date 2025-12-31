@@ -1,4 +1,4 @@
-﻿namespace Mmc.MonoGame.UI.Primitives
+﻿namespace Mmc.MonoGame.UI.Models.Primitives
 {
     public struct Thickness
     {

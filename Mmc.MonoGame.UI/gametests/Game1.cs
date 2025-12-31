@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Mmc.MonoGame.UI.Base;
-using Mmc.MonoGame.UI.Primitives;
-using Mmc.MonoGame.UI.Primitives.Brushes;
-using Mmc.MonoGame.UI.Primitives.Text;
+using Mmc.MonoGame.UI.Models.Brushes;
+using Mmc.MonoGame.UI.Models.Primitives;
+using Mmc.MonoGame.UI.Models.Text;
 using Mmc.MonoGame.UI.UIElements;
 
 namespace Mmc.MonoGame.UI.GameTests

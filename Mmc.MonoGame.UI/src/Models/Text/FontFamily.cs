@@ -1,6 +1,6 @@
 ﻿using Microsoft.Xna.Framework.Graphics;
 
-namespace Mmc.MonoGame.UI.Primitives.Text
+namespace Mmc.MonoGame.UI.Models.Text
 {
     public class FontFamily
     {

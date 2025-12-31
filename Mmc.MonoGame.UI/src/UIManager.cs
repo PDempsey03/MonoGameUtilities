@@ -1,7 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
-using Mmc.MonoGame.UI.Primitives;
+using Mmc.MonoGame.UI.Models.Primitives;
 using System.Diagnostics;
 
 namespace Mmc.MonoGame.UI
