@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
+using Mmc.MonoGame.UI.Primitives;
 using Mmc.MonoGame.UI.Primitives.Text;
 
 namespace Mmc.MonoGame.UI.UIElements
@@ -10,6 +11,8 @@ namespace Mmc.MonoGame.UI.UIElements
         private List<MeasuredWord> _words = [];
         private bool _wrap = false;
         private Color _color = Color.White;
+        private TextHorizontalAlignment _textHorizontalAlignment = TextHorizontalAlignment.Left;
+        private TextVerticalAlignment _textVerticalAlignment = TextVerticalAlignment.Top;
 
         protected string _text = string.Empty;
 
@@ -54,6 +57,32 @@ namespace Mmc.MonoGame.UI.UIElements
             }
         }
 
+        public TextHorizontalAlignment TextHorizontalAlignment
+        {
+            get => _textHorizontalAlignment;
+            set
+            {
+                if (_textHorizontalAlignment != value)
+                {
+                    _textHorizontalAlignment = value;
+                    MarkDirty();
+                }
+            }
+        }
+
+        public TextVerticalAlignment TextVerticalAlignment
+        {
+            get => _textVerticalAlignment;
+            set
+            {
+                if (_textVerticalAlignment != value)
+                {
+                    _textVerticalAlignment = value;
+                    MarkDirty();
+                }
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
 
@@ -86,7 +115,6 @@ namespace Mmc.MonoGame.UI.UIElements
                         Drawer.DrawLine(spriteBatch, start, end, Color.White, Thickness);
                     }
                 }
-
             }
         }
 
@@ -98,9 +126,7 @@ namespace Mmc.MonoGame.UI.UIElements
                 return;
             }
 
-            var parsedText = TextLayoutProcessor.ParseText(Text, FontFamily, TextColor);
-
-            var words = TextLayoutProcessor.TokenizeTextRunSegments(parsedText);
+            List<MeasuredWord> words = TextLayoutProcessor.ProcessText(Text, FontFamily, TextColor);
 
             float totalWidth = 0;
             float maxHeight = 0;
@@ -108,7 +134,6 @@ namespace Mmc.MonoGame.UI.UIElements
             float marginsX = Margin.Horizontal;
             float bordersX = Border.Horizontal;
             float paddingX = Padding.Horizontal;
-            ;
 
             if (Wrap)
             {
@@ -130,27 +155,20 @@ namespace Mmc.MonoGame.UI.UIElements
 
             _words = words;
 
-            float finalWidth;
-            float finalHeight;
-            if (Size.X > 0)
-            {
-                finalWidth = Size.X;
-            }
-            else
-            {
-                finalWidth = marginsX + bordersX + paddingX + totalWidth;
-            }
-
-            if (Size.Y > 0)
-            {
-                finalHeight = Size.Y;
-            }
-            else
-            {
-                finalHeight = Margin.Vertical + Border.Vertical + Padding.Vertical + maxHeight;
-            }
+            float finalWidth = Size.X > 0 ? Size.X : marginsX + bordersX + paddingX + totalWidth;
+            float finalHeight = Size.Y > 0 ? Size.Y : Margin.Vertical + Border.Vertical + Padding.Vertical + maxHeight;
 
             DesiredSize = new Vector2(finalWidth, finalHeight);
+        }
+
+        public override void Arrange(Rectangle finalRect)
+        {
+            base.Arrange(finalRect);
+
+            // nothing to be done for top left
+            if (TextHorizontalAlignment == TextHorizontalAlignment.Left && TextVerticalAlignment == TextVerticalAlignment.Top) return;
+
+            TextLayoutProcessor.ApplyTextAlignment(_words, _contentBounds, TextHorizontalAlignment, TextVerticalAlignment);
         }
     }
 }

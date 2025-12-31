@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Mmc.MonoGame.UI.Primitives.Text
 {
-    public struct TextRunSegment
+    public class TextRunSegment
     {
         public required string Text;
         public required SpriteFont Font;

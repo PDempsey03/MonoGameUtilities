@@ -9,12 +9,24 @@ namespace Mmc.MonoGame.UI.Primitives.Text
     public static class TextLayoutProcessor
     {
         /// <summary>
+        /// Parses and tokenizes rich text into measured words in an unwrapped manner.
+        /// </summary>
+        /// <param name="text">rich text to reformat.</param>
+        /// <param name="fontFamily">font family used to format rich text.</param>
+        /// <param name="defaultColor">default color for text.</param>
+        /// <returns>list of unwrapped MeasuredWords.</returns>
+        public static List<MeasuredWord> ProcessText(string text, FontFamily fontFamily, Color defaultColor)
+        {
+            return TokenizeTextRunSegments(ParseText(text, fontFamily, defaultColor));
+        }
+
+        /// <summary>
         /// Reformats raw rich text into list of text run segments.
         /// </summary>
-        /// <param name="text">Rich text to reformat.</param>
-        /// <param name="fontFamily">Font family used to format rich text.</param>
-        /// <param name="defaultColor">Default color for text.</param>
-        /// <returns>List of TextRunSegments</returns>
+        /// <param name="text">rich text to reformat.</param>
+        /// <param name="fontFamily">font family used to format rich text.</param>
+        /// <param name="defaultColor">default color for text.</param>
+        /// <returns>list of TextRunSegments</returns>
         public static List<TextRunSegment> ParseText(string text, FontFamily fontFamily, Color defaultColor)
         {
             var runs = new List<TextRunSegment>();
@@ -112,8 +124,8 @@ namespace Mmc.MonoGame.UI.Primitives.Text
         /// <summary>
         /// Reformats list of text run segments into a list of measured words.
         /// </summary>
-        /// <param name="segments">Text run segments to reformat.</param>
-        /// <returns>List of MeasuredWords.</returns>
+        /// <param name="segments">text run segments to reformat.</param>
+        /// <returns>list of unwrapped MeasuredWords.</returns>
         public static List<MeasuredWord> TokenizeTextRunSegments(List<TextRunSegment> segments)
         {
             List<MeasuredWord> words = [];
@@ -163,7 +175,7 @@ namespace Mmc.MonoGame.UI.Primitives.Text
         /// </summary>
         /// <param name="words">list of measured words which need to be wrapped.</param>
         /// <param name="maxWidth">max width to display words on to.</param>
-        /// <returns>Size of the resulting wrap.</returns>
+        /// <returns>size of the resulting wrap.</returns>
         public static Vector2 WrapWords(List<MeasuredWord> words, float maxWidth)
         {
             // cursor keeps track of where the next character should be placed
@@ -175,7 +187,7 @@ namespace Mmc.MonoGame.UI.Primitives.Text
             {
                 var word = words[i];
 
-                var wordWidth = word.Width;
+                var wordWidth = word.Segments.Sum(s => s.Font.MeasureString(s.Text).X);
 
                 // if the word cant fit, move the cursor down to the next line
                 if (cursor.X + wordWidth > maxWidth && cursor.X > 0)
@@ -200,7 +212,6 @@ namespace Mmc.MonoGame.UI.Primitives.Text
                         var segment = segments[j];
                         // update the offset of the segment to where the cursor currently is which is where the next character should go
                         segment.PositionOffset = cursor;
-                        segments[j] = segment;
 
                         cursor.X += segment.Size.X;
                         currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
@@ -256,7 +267,6 @@ namespace Mmc.MonoGame.UI.Primitives.Text
                         segment.PositionOffset = cursor;
                         segment.Text = firstHalfText;
                         segment.Size = segment.Font.MeasureString(segment.Text);
-                        segments[j] = segment;
 
                         // update the cursor for the second half of the segment
                         cursor.Y += currentLineHeight;
@@ -290,8 +300,97 @@ namespace Mmc.MonoGame.UI.Primitives.Text
             // update the outgoing variable values
             newMaxSeenWidth = maxSeenWidth;
 
-            cursor.Y += currentLineHeight;
             newCursorPosition = cursor;
+        }
+
+        /// <summary>
+        /// Shifts segments to match the requirements of the text alignment.
+        /// </summary>
+        /// <param name="measuredWords">words to align.</param>
+        /// <param name="contentBounds">bounds to align to.</param>
+        /// <param name="textHorizontalAlignment">horizontal text alignment</param>
+        /// <param name="textVerticalAlignment">vertical text alignment</param>
+        public static void ApplyTextAlignment(List<MeasuredWord> measuredWords, Rectangle contentBounds,
+            TextHorizontalAlignment textHorizontalAlignment, TextVerticalAlignment textVerticalAlignment)
+        {
+            var segments = measuredWords.SelectMany(w => w.Segments);
+
+            ApplyHorizontalTextAlignment(segments, contentBounds.Width, textHorizontalAlignment);
+
+            ApplyVerticalTextAlignment(segments, contentBounds.Height, textVerticalAlignment);
+        }
+
+        /// <summary>
+        /// Shift segments horizontally to match the requirements of the horizontal text alignment.
+        /// </summary>
+        /// <param name="segments">segments to shift.</param>
+        /// <param name="contentWidth">width of the content box.</param>
+        /// <param name="textHorizontalAlignment">horizontal text alignment.</param>
+        private static void ApplyHorizontalTextAlignment(IEnumerable<TextRunSegment> segments, float contentWidth, TextHorizontalAlignment textHorizontalAlignment)
+        {
+            if (textHorizontalAlignment == TextHorizontalAlignment.Center)
+            {
+                var lines = segments.GroupBy(s => s.PositionOffset.Y);
+
+                foreach (var line in lines)
+                {
+                    float lineWidth = line.Sum(l => l.Size.X);
+                    float xOffset = (contentWidth - lineWidth) / 2;
+                    foreach (var segment in line)
+                    {
+                        segment.PositionOffset.X += xOffset;
+                    }
+                }
+            }
+            else if (textHorizontalAlignment == TextHorizontalAlignment.Right)
+            {
+                var lines = segments.GroupBy(s => s.PositionOffset.Y);
+
+                foreach (var line in lines)
+                {
+                    float lineWidth = line.Sum(l => l.Size.X);
+
+                    // handle trailing spaces
+                    var lastSegment = line.Last();
+                    if (lastSegment.Text.EndsWith(' ')) lineWidth -= lastSegment.Font.MeasureString(" ").X;
+
+                    float xOffset = contentWidth - lineWidth;
+                    foreach (var segment in line)
+                    {
+                        segment.PositionOffset.X += xOffset;
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Shift segments horizontally to match the requirements of the vertical text alignment.
+        /// </summary>
+        /// <param name="segments">segments to shift.</param>
+        /// <param name="contentHeight">height of the content box.</param>
+        /// <param name="textVerticalAlignment">vertical text alignment.</param>
+        private static void ApplyVerticalTextAlignment(IEnumerable<TextRunSegment> segments, float contentHeight, TextVerticalAlignment textVerticalAlignment)
+        {
+            if (textVerticalAlignment == TextVerticalAlignment.Center)
+            {
+                // shift everything by half the remaining distance
+                var wordsHeight = segments.Max(s => s.PositionOffset.Y + s.Size.Y) - segments.Min(s => s.PositionOffset.Y);
+                var verticalOffset = (contentHeight - wordsHeight) / 2;
+                foreach (var segment in segments)
+                {
+                    segment.PositionOffset.Y += verticalOffset;
+                }
+            }
+            else if (textVerticalAlignment == TextVerticalAlignment.Bottom)
+            {
+                // shift everything by the total remaining distance
+                var wordsHeight = segments.Max(s => s.PositionOffset.Y + s.Size.Y) - segments.Min(s => s.PositionOffset.Y);
+                var verticalOffset = contentHeight - wordsHeight;
+                foreach (var segment in segments)
+                {
+                    segment.PositionOffset.Y += verticalOffset;
+                }
+            }
         }
 
         /// <summary>
