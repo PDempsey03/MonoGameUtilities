@@ -42,21 +42,6 @@ namespace Mmc.MonoGame.UI.Base
             }
         }
 
-        public override void Arrange(Rectangle finalRect)
-        {
-            base.Arrange(finalRect);
-
-            // place children inside the content bounds
-            foreach (var child in Children)
-            {
-                // determine how much space the child should be given
-                Rectangle childSlot = CalculateChildRectangle(child, _contentBounds);
-
-                // pass in how much space the child has been given
-                child.Arrange(childSlot);
-            }
-        }
-
         public override void Measure(Vector2 availableSize)
         {
             float marginWidth = Margin.Horizontal;
@@ -101,6 +86,21 @@ namespace Mmc.MonoGame.UI.Base
             );
 
             _isLayoutDirty = false;
+        }
+
+        public override void Arrange(Rectangle finalRect)
+        {
+            base.Arrange(finalRect);
+
+            // place children inside the content bounds
+            foreach (var child in Children)
+            {
+                // determine how much space the child should be given
+                Rectangle childSlot = CalculateChildRectangle(child, _contentBounds);
+
+                // pass in how much space the child has been given
+                child.Arrange(childSlot);
+            }
         }
 
         private static Rectangle CalculateChildRectangle(UIElement child, Rectangle contentBounds)

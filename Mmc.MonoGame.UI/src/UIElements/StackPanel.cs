@@ -79,7 +79,7 @@ namespace Mmc.MonoGame.UI.UIElements
 
         public override void Arrange(Rectangle finalRect)
         {
-            base.Arrange(finalRect);
+            CalculateAllBounds(finalRect);
 
             // place children linearly
             float currentOffset = 0;
