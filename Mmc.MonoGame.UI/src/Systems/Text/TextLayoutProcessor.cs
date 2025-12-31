@@ -71,6 +71,7 @@ namespace Mmc.MonoGame.UI.Systems.Text
                                 Font = selectedFont,
                                 Color = currentColor,
                                 IsUnderlined = isUnderlined,
+                                IsNewLine = false,
                                 PositionOffset = Vector2.Zero, // placeholder until refactor
                                 Size = selectedFont.MeasureString(displayText)
                             });
@@ -115,6 +116,7 @@ namespace Mmc.MonoGame.UI.Systems.Text
                     Font = selectedFont,
                     Color = currentColor,
                     IsUnderlined = isUnderlined,
+                    IsNewLine = false,
                     PositionOffset = Vector2.Zero, // placeholder until refactor
                     Size = selectedFont.MeasureString(displayText)
                 });
@@ -136,31 +138,60 @@ namespace Mmc.MonoGame.UI.Systems.Text
 
             foreach (var segment in segments)
             {
-                string[] parts = segment.Text.Split(' ');
+                string[] newLines = segment.Text.Split('\n');
 
-                for (int i = 0; i < parts.Length; i++)
+                for (int l = 0; l < newLines.Length; l++)
                 {
-                    bool isLastPart = i == parts.Length - 1;
+                    var newLine = newLines[l];
+                    string[] parts = newLine.Split(' ');
 
-                    string currentText = isLastPart ? parts[i] : parts[i] + " ";
-
-                    if (string.IsNullOrEmpty(currentText) && !isLastPart) currentText = " ";
-
-                    var newSegment = new TextRunSegment()
+                    for (int i = 0; i < parts.Length; i++)
                     {
-                        Text = currentText,
-                        Font = segment.Font,
-                        Color = segment.Color,
-                        IsUnderlined = segment.IsUnderlined,
-                        PositionOffset = Vector2.Zero,
-                        Size = segment.Font.MeasureString(currentText)
-                    };
+                        bool isLastPart = i == parts.Length - 1;
 
-                    currentWord.Segments.Add(newSegment);
+                        string currentText = isLastPart ? parts[i] : parts[i] + " ";
 
-                    if (!isLastPart)
+                        if (string.IsNullOrEmpty(currentText) && !isLastPart) currentText = " ";
+
+                        var newSegment = new TextRunSegment()
+                        {
+                            Text = currentText,
+                            Font = segment.Font,
+                            Color = segment.Color,
+                            IsUnderlined = segment.IsUnderlined,
+                            IsNewLine = false,
+                            PositionOffset = Vector2.Zero,
+                            Size = segment.Font.MeasureString(currentText)
+                        };
+
+                        currentWord.Segments.Add(newSegment);
+
+                        if (!isLastPart)
+                        {
+                            words.Add(currentWord);
+                            currentWord = new MeasuredWord();
+                        }
+                    }
+
+                    if (l < newLines.Length - 1)
                     {
-                        words.Add(currentWord);
+                        // Finish the current word if it has data
+                        if (currentWord.Segments.Count > 0) words.Add(currentWord);
+
+                        // Create a special word that just represents the Newline
+                        MeasuredWord newlineWord = new MeasuredWord();
+                        newlineWord.Segments.Add(new TextRunSegment()
+                        {
+                            Text = string.Empty,
+                            Font = segment.Font,
+                            Color = segment.Color,
+                            IsUnderlined = segment.IsUnderlined,
+                            IsNewLine = true,
+                            PositionOffset = Vector2.Zero,
+                            Size = new Vector2(0, segment.Font.LineSpacing)
+                        });
+                        words.Add(newlineWord);
+
                         currentWord = new MeasuredWord();
                     }
                 }
@@ -212,11 +243,23 @@ namespace Mmc.MonoGame.UI.Systems.Text
                     for (int j = 0; j < segments.Count; j++)
                     {
                         var segment = segments[j];
-                        // update the offset of the segment to where the cursor currently is which is where the next character should go
-                        segment.PositionOffset = cursor;
 
-                        cursor.X += segment.Size.X;
-                        currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
+                        if (segment.IsNewLine)
+                        {
+                            currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
+                            maxSeenWidth = Math.Max(maxSeenWidth, cursor.X);
+                            cursor.X = 0;
+                            cursor.Y += currentLineHeight;
+                            currentLineHeight = 0;
+                        }
+                        else
+                        {
+                            // update the offset of the segment to where the cursor currently is which is where the next character should go
+                            segment.PositionOffset = cursor;
+
+                            cursor.X += segment.Size.X;
+                            currentLineHeight = Math.Max(currentLineHeight, segment.Size.Y);
+                        }
                     }
                 }
             }
@@ -281,6 +324,7 @@ namespace Mmc.MonoGame.UI.Systems.Text
                             Font = segment.Font,
                             Color = segment.Color,
                             IsUnderlined = segment.IsUnderlined,
+                            IsNewLine = false,
                             PositionOffset = cursor,
                             Size = newFont.MeasureString(secondHalfText)
                         };

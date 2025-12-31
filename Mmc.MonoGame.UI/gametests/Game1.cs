@@ -90,7 +90,7 @@ namespace Mmc.MonoGame.UI.GameTests
                 Text = "[c=blue][b]bold[/b][/c] [c=#ff00ea][i]italic[/i][/c] [c=97,230,225][b][i]bolditalic[/b][/i][/c] [u]underlined[/u] " +
                 "and we built this city on rock and roll! + rock on donkey kong we need to make this as long as mutua [b]ps si[/b]blesss " +
                 "aaaabbbbccccddddeeeeffffgggghhhhiiiijjjjkkkkllllmmmmnnnnooooppppqqqqrrrrssssttttuuuuvvvvwwwwxxxxyyyyzzzz " +
-                "this is a story about kevin",
+                "this is a story about kevin\nhi\noops\nhello kevin\n\n2 n's\n\n\n3n's",
                 FontFamily = fontFamily,
                 Wrap = true,
                 Size = new Vector2(200, 350),
@@ -100,8 +100,8 @@ namespace Mmc.MonoGame.UI.GameTests
                 Margin = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Right,
                 VerticalAlignment = VerticalAlignment.Top,
-                TextHorizontalAlignment = TextHorizontalAlignment.Center,
-                TextVerticalAlignment = TextVerticalAlignment.Center,
+                TextHorizontalAlignment = TextHorizontalAlignment.Left,
+                TextVerticalAlignment = TextVerticalAlignment.Top,
                 BackgroundBrush = new SolidBrush()
                 {
                     Color = Color.Brown
