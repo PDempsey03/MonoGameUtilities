@@ -1,37 +1,50 @@
 ﻿using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Models.Events;
+using Mmc.MonoGame.UI.Models.Primitives;
 
 namespace Mmc.MonoGame.UI.UIElements
 {
     public class Button : ContentElement
     {
+        private bool _isPressed = false;
+
         // events
-        public event EventHandler<MouseButtonEventArgs>? MouseButtonPressed;
-        public event EventHandler<MouseButtonEventArgs>? MouseButtonReleased;
-        public event EventHandler<MouseButtonEventArgs>? MouseButtonHeld;
+        public event EventHandler<MouseButtonEventArgs>? Clicked;
 
         protected override void OnMouseButtonPressed(MouseButtonEventArgs args)
         {
-            MouseButtonPressed?.Invoke(this, args);
-            args.Handled = true;
-
             base.OnMouseButtonPressed(args);
+
+            if (args.MouseButton == MouseButton.Left)
+            {
+                _isPressed = true;
+            }
+
+            args.Handled = true;
         }
 
         public override void OnMouseButtonReleased(MouseButtonEventArgs args)
         {
-            MouseButtonReleased?.Invoke(this, args);
-            args.Handled = true;
-
             base.OnMouseButtonReleased(args);
+
+            if (args.MouseButton == MouseButton.Left && _isPressed)
+            {
+                _isPressed = false;
+
+                if (IsMouseOver)
+                {
+                    Clicked?.Invoke(this, args);
+                }
+            }
+
+            args.Handled = true;
         }
 
         public override void OnMouseButtonHeld(MouseButtonEventArgs args)
         {
-            MouseButtonHeld?.Invoke(this, args);
-            args.Handled = true;
-
             base.OnMouseButtonHeld(args);
+
+            args.Handled = true;
         }
     }
 }

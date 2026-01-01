@@ -23,10 +23,14 @@ namespace Mmc.MonoGame.UI.Base
         protected Rectangle _backgroundBounds;
         protected Rectangle _contentBounds;
 
+        protected bool _isMouseOver = false;
+
         /// <summary>
         /// Used for searching for a ui element during run time
         /// </summary>
         public string? Name { get; set; }
+
+        public bool IsMouseOver { get => _isMouseOver; private set => _isMouseOver = value; }
 
         // transform
         public Vector2 Offset
@@ -133,6 +137,9 @@ namespace Mmc.MonoGame.UI.Base
         // events
         public event EventHandler<EventArgs>? MouseEntered;
         public event EventHandler<EventArgs>? MouseLeft;
+        public event EventHandler<MouseButtonEventArgs>? MouseButtonPressed;
+        public event EventHandler<MouseButtonEventArgs>? MouseButtonReleased;
+        public event EventHandler<MouseButtonEventArgs>? MouseButtonHeld;
 
         // hierarchy
         public UIElement? Parent { get; protected internal set; }
@@ -266,6 +273,7 @@ namespace Mmc.MonoGame.UI.Base
 
         public virtual void OnMouseEnter()
         {
+            _isMouseOver = true;
             MouseEntered?.Invoke(this, EventArgs.Empty);
         }
 
@@ -278,6 +286,7 @@ namespace Mmc.MonoGame.UI.Base
 
         public virtual void OnMouseLeave()
         {
+            _isMouseOver = false;
             MouseLeft?.Invoke(this, EventArgs.Empty);
         }
 
@@ -290,7 +299,7 @@ namespace Mmc.MonoGame.UI.Base
 
         protected virtual void OnMouseButtonPressed(MouseButtonEventArgs args)
         {
-            // does nothing by default
+            MouseButtonPressed?.Invoke(this, args);
         }
 
         internal void RaiseMouseButtonReleased(MouseButtonEventArgs args)
@@ -302,7 +311,7 @@ namespace Mmc.MonoGame.UI.Base
 
         public virtual void OnMouseButtonReleased(MouseButtonEventArgs args)
         {
-            // does nothing by default
+            MouseButtonReleased?.Invoke(this, args);
         }
 
         internal virtual void RaiseMouseButtonHeld(MouseButtonEventArgs args)
@@ -314,7 +323,7 @@ namespace Mmc.MonoGame.UI.Base
 
         public virtual void OnMouseButtonHeld(MouseButtonEventArgs args)
         {
-            // does nothing by default
+            MouseButtonHeld?.Invoke(this, args);
         }
 
         #endregion Input

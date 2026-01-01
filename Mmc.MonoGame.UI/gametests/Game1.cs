@@ -80,6 +80,28 @@ namespace Mmc.MonoGame.UI.GameTests
 
             root.AddChild(stackPanel);
 
+            var buttonLabel = new Label()
+            {
+                Text = "Clicked 0 times",
+                FontFamily = fontFamily,
+                Wrap = true,
+                TextColor = Color.White,
+                Border = new Thickness(0),
+                Padding = new Thickness(5, 2),
+                Margin = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                TextHorizontalAlignment = TextHorizontalAlignment.Center,
+                TextVerticalAlignment = TextVerticalAlignment.Center,
+            };
+
+            int buttonClickedCount = 0;
+            void UpdateButtonLabelCount()
+            {
+                buttonClickedCount++;
+                buttonLabel.Text = $"Clicked {buttonClickedCount} times";
+            }
+
             Thickness baseButtonBorderThickness = new Thickness(2);
             var button = new Button()
             {
@@ -100,21 +122,10 @@ namespace Mmc.MonoGame.UI.GameTests
                 {
                     Color = Color.Red
                 },
-                Content = new Label()
-                {
-                    Text = "Button",
-                    FontFamily = fontFamily,
-                    Wrap = true,
-                    TextColor = Color.White,
-                    Border = new Thickness(0),
-                    Padding = new Thickness(5, 2),
-                    Margin = new Thickness(0),
-                    HorizontalAlignment = HorizontalAlignment.Center,
-                    VerticalAlignment = VerticalAlignment.Center,
-                    TextHorizontalAlignment = TextHorizontalAlignment.Center,
-                    TextVerticalAlignment = TextVerticalAlignment.Center,
-                }
+                Content = buttonLabel
             };
+
+            button.Clicked += (s, e) => UpdateButtonLabelCount();
 
             button.MouseEntered += (s, e) =>
             {
@@ -152,7 +163,7 @@ namespace Mmc.MonoGame.UI.GameTests
                 switch (e.MouseButton)
                 {
                     case MouseButton.Left:
-                        button.Border -= new Thickness(2);
+                        button.Border = baseButtonBorderThickness;
                         break;
                     case MouseButton.Middle:
                         break;
