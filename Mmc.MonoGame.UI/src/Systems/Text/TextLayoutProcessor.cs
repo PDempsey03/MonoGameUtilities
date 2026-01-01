@@ -72,7 +72,7 @@ namespace Mmc.MonoGame.UI.Systems.Text
                                 Color = currentColor,
                                 IsUnderlined = isUnderlined,
                                 IsNewLine = false,
-                                PositionOffset = Vector2.Zero, // placeholder until refactor
+                                PositionOffset = Vector2.Zero,
                                 Size = selectedFont.MeasureString(displayText)
                             });
 
@@ -117,7 +117,7 @@ namespace Mmc.MonoGame.UI.Systems.Text
                     Color = currentColor,
                     IsUnderlined = isUnderlined,
                     IsNewLine = false,
-                    PositionOffset = Vector2.Zero, // placeholder until refactor
+                    PositionOffset = Vector2.Zero,
                     Size = selectedFont.MeasureString(displayText)
                 });
             }

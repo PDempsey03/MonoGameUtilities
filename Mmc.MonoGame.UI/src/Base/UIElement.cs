@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Models.Brushes;
 using Mmc.MonoGame.UI.Models.Events;
 using Mmc.MonoGame.UI.Models.Primitives;
+using Mmc.MonoGame.UI.Rendering;
 
 namespace Mmc.MonoGame.UI.Base
 {
@@ -31,6 +31,8 @@ namespace Mmc.MonoGame.UI.Base
         public string? Name { get; set; }
 
         public bool IsMouseOver { get => _isMouseOver; private set => _isMouseOver = value; }
+
+        public bool ClipToBounds { get; set; } = false;
 
         // transform
         public Vector2 Offset
@@ -147,10 +149,26 @@ namespace Mmc.MonoGame.UI.Base
 
         public abstract void Update(GameTime gameTime);
 
-        public virtual void Draw(SpriteBatch spriteBatch)
+        public void Draw(RenderContext renderContext)
         {
-            BackgroundBrush?.Draw(this, spriteBatch, BackgroundBounds);
-            BorderBrush?.Draw(this, spriteBatch, GlobalBounds);
+            if (ClipToBounds)
+            {
+                Rectangle previousScissorRectangle = renderContext.RestartWithNewScissorRectangle(renderContext.CalculateNewScissorRectangle(_contentBounds));
+
+                InternalDraw(renderContext);
+
+                renderContext.RestartWithNewScissorRectangle(previousScissorRectangle);
+            }
+            else
+            {
+                InternalDraw(renderContext);
+            }
+        }
+
+        public virtual void InternalDraw(RenderContext renderContext)
+        {
+            BackgroundBrush?.Draw(this, renderContext, BackgroundBounds);
+            BorderBrush?.Draw(this, renderContext, GlobalBounds);
         }
 
         /// <summary>

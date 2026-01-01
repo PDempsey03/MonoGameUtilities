@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Mmc.MonoGame.UI.Rendering;
 
 namespace Mmc.MonoGame.UI.Base
 {
@@ -37,13 +37,13 @@ namespace Mmc.MonoGame.UI.Base
             }
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void InternalDraw(RenderContext renderContext)
         {
-            base.Draw(spriteBatch);
+            base.InternalDraw(renderContext);
 
             for (int i = 0; i < Children.Count; i++)
             {
-                Children[i].Draw(spriteBatch);
+                Children[i].Draw(renderContext);
             }
         }
 

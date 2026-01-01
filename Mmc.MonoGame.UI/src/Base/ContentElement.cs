@@ -1,5 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using Mmc.MonoGame.UI.Rendering;
 
 namespace Mmc.MonoGame.UI.Base
 {
@@ -27,11 +27,11 @@ namespace Mmc.MonoGame.UI.Base
             Content?.Update(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void InternalDraw(RenderContext renderContext)
         {
-            base.Draw(spriteBatch);
+            base.InternalDraw(renderContext);
 
-            Content?.Draw(spriteBatch);
+            Content?.Draw(renderContext);
         }
 
         public override void Measure(Vector2 availableSize)

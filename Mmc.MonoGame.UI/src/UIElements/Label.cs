@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Models.Primitives;
 using Mmc.MonoGame.UI.Models.Text;
+using Mmc.MonoGame.UI.Rendering;
 using Mmc.MonoGame.UI.Systems.Text;
 
 namespace Mmc.MonoGame.UI.UIElements
@@ -89,13 +89,15 @@ namespace Mmc.MonoGame.UI.UIElements
 
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public override void InternalDraw(RenderContext renderContext)
         {
-            base.Draw(spriteBatch);
+            base.InternalDraw(renderContext);
 
             if (FontFamily == null || string.IsNullOrEmpty(Text)) return;
 
             Vector2 textPosition = ContentBounds.Location.ToVector2(); // top left of the content area
+
+            var spriteBatch = renderContext.SpriteBatch;
 
             foreach (var run in _words)
             {

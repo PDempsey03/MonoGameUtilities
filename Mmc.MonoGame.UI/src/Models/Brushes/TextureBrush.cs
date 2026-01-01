@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Models.Primitives;
+using Mmc.MonoGame.UI.Rendering;
 
 namespace Mmc.MonoGame.UI.Models.Brushes
 {
@@ -29,17 +30,19 @@ namespace Mmc.MonoGame.UI.Models.Brushes
         /// </summary>
         public int EdgeSize { get; set; } = 1;
 
-        public override void Draw(UIElement host, SpriteBatch spriteBatch, Rectangle destinationRectangle)
+        public override void Draw(UIElement host, RenderContext renderContext, Rectangle destinationRectangle)
         {
             if (Texture == null)
             {
                 if (DefaultToSolidColorIfNoTexture)
-                    base.Draw(host, spriteBatch, destinationRectangle);
+                    base.Draw(host, renderContext, destinationRectangle);
 
                 return;
             }
 
             Rectangle trueSourceRectangle = SourceRectangle ?? new Rectangle(0, 0, Texture.Width, Texture.Height);
+
+            var spriteBatch = renderContext.SpriteBatch;
 
             switch (TextureMode)
             {

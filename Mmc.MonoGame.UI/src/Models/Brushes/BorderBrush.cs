@@ -1,12 +1,12 @@
 ﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
+using Mmc.MonoGame.UI.Rendering;
 
 namespace Mmc.MonoGame.UI.Models.Brushes
 {
     public class BorderBrush : SolidBrush
     {
-        public override void Draw(UIElement host, SpriteBatch spriteBatch, Rectangle destinationRectangle)
+        public override void Draw(UIElement host, RenderContext renderContext, Rectangle destinationRectangle)
         {
             var borderThickness = host.Border;
 
@@ -16,6 +16,8 @@ namespace Mmc.MonoGame.UI.Models.Brushes
             Vector2 bottomLeft = new Vector2(destinationRectangle.Left, destinationRectangle.Bottom);
 
             // NOTE: its important to loop clockwise here to keep the thickness facing the right direction (inward)
+
+            var spriteBatch = renderContext.SpriteBatch;
 
             // top line 
             Drawer.DrawLine(spriteBatch, topLeft, topRight, Color, borderThickness.Top);

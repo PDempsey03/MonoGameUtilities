@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Models.Primitives;
+using Mmc.MonoGame.UI.Rendering;
 using Mmc.MonoGame.UI.Systems.Input;
 using System.Diagnostics;
 
@@ -13,14 +14,7 @@ namespace Mmc.MonoGame.UI
 
         public ContainerElement Root { get; private set; }
 
-        public SpriteBatch SpriteBatch { get; private set; }
-
-        // sprite batch settings
-        public SpriteSortMode SpriteSortMode { get; set; } = SpriteSortMode.Deferred;
-        public BlendState BlendState { get; set; } = BlendState.AlphaBlend;
-        public SamplerState SamplerState { get; set; } = SamplerState.PointWrap;
-        public DepthStencilState DepthStencilState { get; set; } = DepthStencilState.Default;
-        public RasterizerState RasterizerState { get; set; } = RasterizerState.CullNone;
+        public RenderContext RenderContext { get; private set; }
 
         // input
         private InputService InputService { get; init; }
@@ -37,7 +31,17 @@ namespace Mmc.MonoGame.UI
                 VerticalAlignment = VerticalAlignment.Stretch,
             };
 
-            SpriteBatch = new SpriteBatch(game.GraphicsDevice);
+            RenderContext = new RenderContext(
+                new SpriteBatch(game.GraphicsDevice),
+                SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                SamplerState.PointWrap,
+                DepthStencilState.Default,
+                new RasterizerState()
+                {
+                    CullMode = CullMode.None,
+                    ScissorTestEnable = true // allow for clipping
+                });
 
             game.Window.ClientSizeChanged += (s, e) => UpdateRootSize();
 
@@ -91,17 +95,11 @@ namespace Mmc.MonoGame.UI
 
         public void Draw()
         {
-            SpriteBatch.Begin(
-                SpriteSortMode,
-                BlendState,
-                SamplerState,
-                DepthStencilState,
-                RasterizerState
-            );
+            RenderContext.Begin();
 
-            Root.Draw(SpriteBatch);
+            Root.Draw(RenderContext);
 
-            SpriteBatch.End();
+            RenderContext.End();
         }
     }
 }
