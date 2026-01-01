@@ -10,7 +10,7 @@ namespace Mmc.MonoGame.UI.Models.Brushes
 
         public virtual void Draw(UIElement host, RenderContext renderContext, Rectangle destinationRectangle)
         {
-            Drawer.FillRectangle(renderContext.SpriteBatch, destinationRectangle, Color);
+            renderContext.FillRectangle(destinationRectangle, Color);
         }
     }
 }

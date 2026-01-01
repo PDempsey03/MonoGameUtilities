@@ -17,19 +17,17 @@ namespace Mmc.MonoGame.UI.Models.Brushes
 
             // NOTE: its important to loop clockwise here to keep the thickness facing the right direction (inward)
 
-            var spriteBatch = renderContext.SpriteBatch;
-
             // top line 
-            Drawer.DrawLine(spriteBatch, topLeft, topRight, Color, borderThickness.Top);
+            renderContext.DrawLine(topLeft, topRight, Color, borderThickness.Top);
 
             // right line
-            Drawer.DrawLine(spriteBatch, topRight, bottomRight, Color, borderThickness.Right);
+            renderContext.DrawLine(topRight, bottomRight, Color, borderThickness.Right);
 
             // bottom line
-            Drawer.DrawLine(spriteBatch, bottomRight, bottomLeft, Color, borderThickness.Bottom);
+            renderContext.DrawLine(bottomRight, bottomLeft, Color, borderThickness.Bottom);
 
             // left line
-            Drawer.DrawLine(spriteBatch, bottomLeft, topLeft, Color, borderThickness.Left);
+            renderContext.DrawLine(bottomLeft, topLeft, Color, borderThickness.Left);
         }
     }
 }

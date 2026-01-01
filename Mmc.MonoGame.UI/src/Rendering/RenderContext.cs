@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Mmc.MonoGame.UI.Rendering
 {
-    public sealed class RenderContext
+    public sealed partial class RenderContext : IDisposable
     {
         public SpriteBatch SpriteBatch { get; init; }
 
@@ -13,6 +13,12 @@ namespace Mmc.MonoGame.UI.Rendering
         public DepthStencilState DepthStencilState { get; init; }
         public RasterizerState RasterizerState { get; init; }
 
+        private readonly Texture2D _pixel;
+
+        public event EventHandler<EventArgs>? Disposing;
+
+        private bool _disposed;
+
         public RenderContext(SpriteBatch spriteBatch, SpriteSortMode sort, BlendState blend, SamplerState sampler, DepthStencilState depth, RasterizerState rast)
         {
             SpriteBatch = spriteBatch;
@@ -21,6 +27,14 @@ namespace Mmc.MonoGame.UI.Rendering
             SamplerState = sampler;
             DepthStencilState = depth;
             RasterizerState = rast;
+
+            _pixel = new Texture2D(spriteBatch.GraphicsDevice, 1, 1);
+            _pixel.SetData([Color.White]);
+        }
+
+        ~RenderContext()
+        {
+            Dispose(disposing: false);
         }
 
         public void Begin()
@@ -57,6 +71,26 @@ namespace Mmc.MonoGame.UI.Rendering
         public Rectangle CalculateNewScissorRectangle(Rectangle newClippingBounds)
         {
             return Rectangle.Intersect(newClippingBounds, SpriteBatch.GraphicsDevice.ScissorRectangle);
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (_disposed) return;
+
+            if (disposing)
+            {
+                Disposing?.Invoke(this, EventArgs.Empty);
+            }
+
+            _pixel.Dispose();
+
+            _disposed = true;
         }
     }
 }

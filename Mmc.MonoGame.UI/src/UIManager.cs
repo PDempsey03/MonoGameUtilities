@@ -54,8 +54,6 @@ namespace Mmc.MonoGame.UI
             InteractionService = new InteractionService(InputService, Root);
 
             UpdateRootSize();
-
-            Drawer.Initialize(game.GraphicsDevice);
         }
 
         public UIElement? FindUIElementByName(string name)

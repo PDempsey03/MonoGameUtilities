@@ -115,7 +115,7 @@ namespace Mmc.MonoGame.UI.UIElements
 
                         Vector2 end = start + new Vector2(segment.Size.X, 0);
 
-                        Drawer.DrawLine(spriteBatch, start, end, Color.White, Thickness);
+                        renderContext.DrawLine(start, end, Color.White, Thickness);
                     }
                 }
             }
