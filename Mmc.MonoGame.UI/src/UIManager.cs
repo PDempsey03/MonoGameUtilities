@@ -54,6 +54,16 @@ namespace Mmc.MonoGame.UI
             Drawer.Initialize(game.GraphicsDevice);
         }
 
+        public UIElement? FindUIElementByName(string name)
+        {
+            return Root.FindUIElementByName(name);
+        }
+
+        public T? FindUIElementByBame<T>(string name) where T : UIElement
+        {
+            return Root.FindUIElementByName(name) as T;
+        }
+
         public void UpdateRootSize()
         {
             Viewport viewPort = _game.GraphicsDevice.Viewport;

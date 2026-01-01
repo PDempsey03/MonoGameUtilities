@@ -107,5 +107,20 @@ namespace Mmc.MonoGame.UI.Base
                 child.Arrange(childSlot);
             }
         }
+
+        public override UIElement? FindUIElementByName(string name)
+        {
+            var baseResult = base.FindUIElementByName(name);
+
+            if (baseResult != null) return baseResult;
+
+            foreach (var child in Children)
+            {
+                var childResult = child.FindUIElementByName(name);
+                if (childResult != null) return childResult;
+            }
+
+            return null;
+        }
     }
 }

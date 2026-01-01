@@ -23,6 +23,11 @@ namespace Mmc.MonoGame.UI.Base
         protected Rectangle _backgroundBounds;
         protected Rectangle _contentBounds;
 
+        /// <summary>
+        /// Used for searching for a ui element during run time
+        /// </summary>
+        public string? Name { get; set; }
+
         // transform
         public Vector2 Offset
         {
@@ -171,6 +176,13 @@ namespace Mmc.MonoGame.UI.Base
             CalculateAllBounds(finalRect);
         }
 
+        public virtual UIElement? FindUIElementByName(string name)
+        {
+            return name == Name ? this : null;
+        }
+
+        #region Bounds
+
         protected void CalculateAllBounds(Rectangle parentContentBounds)
         {
             CalculateGlobalBounds(parentContentBounds);
@@ -234,6 +246,8 @@ namespace Mmc.MonoGame.UI.Base
                 Math.Max(0, _globalBounds.Height - (int)(Border.Top + Border.Bottom + Padding.Top + Padding.Bottom))
             );
         }
+
+        #endregion Bounds
 
         public void MarkDirty()
         {
@@ -304,5 +318,10 @@ namespace Mmc.MonoGame.UI.Base
         }
 
         #endregion Input
+
+        public override string ToString()
+        {
+            return $"{GetType().Name} (Name: {Name ?? "Unnamed"})";
+        }
     }
 }
