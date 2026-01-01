@@ -3,48 +3,35 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Mmc.MonoGame.UI.Base
 {
-    public class ContainerElement : UIElement
+    public abstract class ContentElement : UIElement
     {
-        public List<UIElement> Children { get; init; } = [];
+        private UIElement? _content;
 
-        public void AddChild(UIElement child)
+        public UIElement? Content
         {
-            if (child.Parent is ContainerElement containerElement)
+            get => _content;
+            set
             {
-                containerElement.RemoveChild(child);
+                if (_content != value)
+                {
+                    if (_content != null) _content.Parent = null;
+                    _content = value;
+                    if (_content != null) _content.Parent = this;
+                    MarkDirty();
+                }
             }
-
-            child.Parent = this;
-            Children.Add(child);
-            MarkDirty();
-        }
-
-        public void RemoveChild(UIElement child)
-        {
-            if (Children.Remove(child))
-            {
-                child.Parent = null;
-                MarkDirty();
-            }
-
         }
 
         public override void Update(GameTime gameTime)
         {
-            for (int i = 0; i < Children.Count; i++)
-            {
-                Children[i].Update(gameTime);
-            }
+            Content?.Update(gameTime);
         }
 
         public override void Draw(SpriteBatch spriteBatch)
         {
             base.Draw(spriteBatch);
 
-            for (int i = 0; i < Children.Count; i++)
-            {
-                Children[i].Draw(spriteBatch);
-            }
+            Content?.Draw(spriteBatch);
         }
 
         public override void Measure(Vector2 availableSize)
@@ -70,19 +57,17 @@ namespace Mmc.MonoGame.UI.Base
             childConstraint.X = Math.Max(0, childConstraint.X);
             childConstraint.Y = Math.Max(0, childConstraint.Y);
 
-            // measure children to see their desired sizes
-            // this is the default by trying to use the max child size
-            Vector2 maxDesiredChildSize = Vector2.Zero;
-            foreach (var child in Children)
+            Vector2 desiredChildSize = Vector2.Zero;
+
+            if (_content != null)
             {
-                child.Measure(childConstraint);
-                maxDesiredChildSize.X = Math.Max(maxDesiredChildSize.X, child.DesiredSize.X);
-                maxDesiredChildSize.Y = Math.Max(maxDesiredChildSize.Y, child.DesiredSize.Y);
+                _content.Measure(childConstraint);
+                desiredChildSize = _content.DesiredSize;
             }
 
             // if using auto sizing on either dimension, assign it now
-            if (bodyWidth == 0) bodyWidth = maxDesiredChildSize.X + internalWidth;
-            if (bodyHeight == 0) bodyHeight = maxDesiredChildSize.Y + internalHeight;
+            if (bodyWidth == 0) bodyWidth = desiredChildSize.X + internalWidth;
+            if (bodyHeight == 0) bodyHeight = desiredChildSize.Y + internalHeight;
 
             // set the desired size representing the its size (content, padding, and border) with its margins to encapsulate its true desired size
             DesiredSize = new Vector2(
@@ -97,14 +82,13 @@ namespace Mmc.MonoGame.UI.Base
         {
             base.Arrange(finalRect);
 
-            // place children inside the content bounds
-            foreach (var child in Children)
+            if (_content != null)
             {
                 // determine how much space the child should be given
-                Rectangle childSlot = child.CalculateChildRectangle(_contentBounds);
+                Rectangle childSlot = _content.CalculateChildRectangle(_contentBounds);
 
                 // pass in how much space the child has been given
-                child.Arrange(childSlot);
+                _content.Arrange(childSlot);
             }
         }
     }

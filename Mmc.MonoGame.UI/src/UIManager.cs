@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Models.Primitives;
+using Mmc.MonoGame.UI.Systems.Input;
 using System.Diagnostics;
 
 namespace Mmc.MonoGame.UI
@@ -20,6 +21,10 @@ namespace Mmc.MonoGame.UI
         public SamplerState SamplerState { get; set; } = SamplerState.PointWrap;
         public DepthStencilState DepthStencilState { get; set; } = DepthStencilState.Default;
         public RasterizerState RasterizerState { get; set; } = RasterizerState.CullNone;
+
+        // input
+        private InputService InputService { get; init; }
+        private InteractionService InteractionService { get; init; }
 
         public UIManager(Game game)
         {
@@ -41,6 +46,9 @@ namespace Mmc.MonoGame.UI
                 Debug.WriteLine("Window Bounds: " + game.GraphicsDevice.Viewport.Bounds);
             };
 
+            InputService = new InputService();
+            InteractionService = new InteractionService(InputService, Root);
+
             UpdateRootSize();
 
             Drawer.Initialize(game.GraphicsDevice);
@@ -55,6 +63,10 @@ namespace Mmc.MonoGame.UI
 
         public void Update(GameTime gameTime)
         {
+            InputService.UpdateState();
+            InteractionService.Update();
+            InputService.UpdateEvents();
+
             if (Root.IsLayoutDirty)
             {
                 Viewport viewPort = _game.GraphicsDevice.Viewport;

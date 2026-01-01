@@ -36,6 +36,15 @@
         Horizontal
     }
 
+    public enum MouseButton
+    {
+        Left,
+        Right,
+        Middle,
+        XButton1,
+        XButton2
+    }
+
     public enum TextureMode
     {
         // stretch texture accross entire destination rectangle

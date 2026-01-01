@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Mmc.MonoGame.UI.Models.Brushes;
+using Mmc.MonoGame.UI.Models.Events;
 using Mmc.MonoGame.UI.Models.Primitives;
 
 namespace Mmc.MonoGame.UI.Base
@@ -10,6 +11,14 @@ namespace Mmc.MonoGame.UI.Base
         protected bool _isLayoutDirty = true;
         protected Vector2 _offset = Vector2.Zero;
         protected Vector2 _size = Vector2.Zero;
+
+        protected HorizontalAlignment _horizontalAlignment = HorizontalAlignment.Left;
+        protected VerticalAlignment _verticalAlignment = VerticalAlignment.Top;
+
+        protected Thickness _margin = Thickness.None;
+        protected Thickness _border = Thickness.None;
+        protected Thickness _padding = Thickness.None;
+
         protected Rectangle _globalBounds;
         protected Rectangle _backgroundBounds;
         protected Rectangle _contentBounds;
@@ -49,15 +58,76 @@ namespace Mmc.MonoGame.UI.Base
         public Rectangle ContentBounds => _contentBounds;
 
         // layout
-        public HorizontalAlignment HorizontalAlignment { get; set; }
-        public VerticalAlignment VerticalAlignment { get; set; }
-        public Thickness Margin { get; set; }
-        public Thickness Padding { get; set; }
-        public Thickness Border { get; set; }
+        public HorizontalAlignment HorizontalAlignment
+        {
+            get => _horizontalAlignment;
+            set
+            {
+                if (_horizontalAlignment != value)
+                {
+                    _horizontalAlignment = value;
+                    MarkDirty();
+                }
+            }
+        }
+        public VerticalAlignment VerticalAlignment
+        {
+            get => _verticalAlignment;
+            set
+            {
+                if (_verticalAlignment != value)
+                {
+                    _verticalAlignment = value;
+                    MarkDirty();
+                }
+            }
+        }
+        public Thickness Margin
+        {
+            get => _margin;
+            set
+            {
+                if (_margin != value)
+                {
+                    _margin = value;
+                    MarkDirty();
+                }
+            }
+        }
+
+        public Thickness Border
+        {
+            get => _border;
+            set
+            {
+                if (_border != value)
+                {
+                    _border = value;
+                    MarkDirty();
+                }
+            }
+        }
+
+        public Thickness Padding
+        {
+            get => _padding;
+            set
+            {
+                if (_padding != value)
+                {
+                    _padding = value;
+                    MarkDirty();
+                }
+            }
+        }
 
         // brushes
         public IBrush? BorderBrush { get; set; }
         public IBrush? BackgroundBrush { get; set; }
+
+        // events
+        public event EventHandler<EventArgs>? MouseEntered;
+        public event EventHandler<EventArgs>? MouseLeft;
 
         // hierarchy
         public UIElement? Parent { get; protected internal set; }
@@ -170,5 +240,69 @@ namespace Mmc.MonoGame.UI.Base
             _isLayoutDirty = true;
             Parent?.MarkDirty();
         }
+
+        #region Input
+
+        internal void RaiseMouseEnter()
+        {
+            OnMouseEnter();
+
+            Parent?.RaiseMouseEnter();
+        }
+
+        public virtual void OnMouseEnter()
+        {
+            MouseEntered?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal void RaiseMouseLeave()
+        {
+            OnMouseLeave();
+
+            Parent?.RaiseMouseLeave();
+        }
+
+        public virtual void OnMouseLeave()
+        {
+            MouseLeft?.Invoke(this, EventArgs.Empty);
+        }
+
+        internal void RaiseMouseButtonPressed(MouseButtonEventArgs args)
+        {
+            OnMouseButtonPressed(args);
+
+            if (!args.Handled) Parent?.RaiseMouseButtonPressed(args);
+        }
+
+        protected virtual void OnMouseButtonPressed(MouseButtonEventArgs args)
+        {
+            // does nothing by default
+        }
+
+        internal void RaiseMouseButtonReleased(MouseButtonEventArgs args)
+        {
+            OnMouseButtonReleased(args);
+
+            if (!args.Handled) Parent?.RaiseMouseButtonReleased(args);
+        }
+
+        public virtual void OnMouseButtonReleased(MouseButtonEventArgs args)
+        {
+            // does nothing by default
+        }
+
+        internal virtual void RaiseMouseButtonHeld(MouseButtonEventArgs args)
+        {
+            OnMouseButtonHeld(args);
+
+            if (!args.Handled) Parent?.RaiseMouseButtonHeld(args);
+        }
+
+        public virtual void OnMouseButtonHeld(MouseButtonEventArgs args)
+        {
+            // does nothing by default
+        }
+
+        #endregion Input
     }
 }

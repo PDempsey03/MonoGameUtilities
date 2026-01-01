@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Mmc.MonoGame.UI.Base;
 using Mmc.MonoGame.UI.Models.Brushes;
 using Mmc.MonoGame.UI.Models.Primitives;
 using Mmc.MonoGame.UI.Models.Text;
@@ -37,6 +36,13 @@ namespace Mmc.MonoGame.UI.GameTests
 
             var root = uiManager.Root;
 
+            FontFamily fontFamily = new FontFamily(Content.Load<SpriteFont>("TestFont_Regular"))
+            {
+                Bold = Content.Load<SpriteFont>("TestFont_Bold"),
+                BoldItalic = Content.Load<SpriteFont>("TestFont_BoldItalic"),
+                Italic = Content.Load<SpriteFont>("TestFont_Italic"),
+            };
+
             var stackPanel = new StackPanel()
             {
                 Orientation = Orientation.Vertical,
@@ -55,12 +61,30 @@ namespace Mmc.MonoGame.UI.GameTests
                     Color = Color.Red,
                 },
             };
+
+            stackPanel.MouseEntered += (s, e) =>
+            {
+                if (stackPanel.BorderBrush is SolidBrush solidBrush)
+                {
+                    solidBrush.Color = Color.Green;
+                }
+            };
+
+            stackPanel.MouseLeft += (s, e) =>
+            {
+                if (stackPanel.BorderBrush is SolidBrush solidBrush)
+                {
+                    solidBrush.Color = Color.Red;
+                }
+            };
+
             root.AddChild(stackPanel);
 
-            stackPanel.AddChild(new ContainerElement()
+            Thickness baseButtonBorderThickness = new Thickness(2);
+            var button = new Button()
             {
                 Size = new Vector2(300, 100),
-                Border = new Thickness(2),
+                Border = baseButtonBorderThickness,
                 Padding = new Thickness(0),
                 Margin = new Thickness(0),
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -74,16 +98,70 @@ namespace Mmc.MonoGame.UI.GameTests
                 },
                 BorderBrush = new BorderBrush()
                 {
-                    Color = Color.Green
+                    Color = Color.Red
                 },
-            });
-
-            FontFamily fontFamily = new FontFamily(Content.Load<SpriteFont>("TestFont_Regular"))
-            {
-                Bold = Content.Load<SpriteFont>("TestFont_Bold"),
-                BoldItalic = Content.Load<SpriteFont>("TestFont_BoldItalic"),
-                Italic = Content.Load<SpriteFont>("TestFont_Italic"),
+                Content = new Label()
+                {
+                    Text = "Button",
+                    FontFamily = fontFamily,
+                    Wrap = true,
+                    TextColor = Color.White,
+                    Border = new Thickness(0),
+                    Padding = new Thickness(5, 2),
+                    Margin = new Thickness(0),
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    TextHorizontalAlignment = TextHorizontalAlignment.Center,
+                    TextVerticalAlignment = TextVerticalAlignment.Center,
+                }
             };
+
+            button.MouseEntered += (s, e) =>
+            {
+                if (button.BorderBrush is SolidBrush solidBrush)
+                {
+                    solidBrush.Color = Color.Green;
+                }
+            };
+
+            button.MouseLeft += (s, e) =>
+            {
+                if (button.BorderBrush is SolidBrush solidBrush)
+                {
+                    solidBrush.Color = Color.Red;
+                }
+                button.Border = baseButtonBorderThickness;
+            };
+
+            button.MouseButtonPressed += (s, e) =>
+            {
+                switch (e.MouseButton)
+                {
+                    case MouseButton.Left:
+                        button.Border += new Thickness(2);
+                        break;
+                    case MouseButton.Middle:
+                        break;
+                    case MouseButton.Right:
+                        break;
+                }
+            };
+
+            button.MouseButtonReleased += (s, e) =>
+            {
+                switch (e.MouseButton)
+                {
+                    case MouseButton.Left:
+                        button.Border -= new Thickness(2);
+                        break;
+                    case MouseButton.Middle:
+                        break;
+                    case MouseButton.Right:
+                        break;
+                }
+            };
+
+            stackPanel.AddChild(button);
 
             stackPanel.AddChild(new Label()
             {
