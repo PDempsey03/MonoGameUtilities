@@ -174,6 +174,27 @@ namespace Mmc.MonoGame.UI.GameTests
 
             stackPanel.AddChild(button);
 
+            stackPanel.AddChild(new UIImage()
+            {
+                Texture = Content.Load<Texture2D>("WarrenWide"),
+                Size = new Vector2(200, 200),
+                StretchMode = ImageStretchMode.Uniform,
+                ClipToBounds = true,
+                Margin = new Thickness(0),
+                Border = new Thickness(10),
+                Padding = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                BackgroundBrush = new SolidBrush()
+                {
+                    Color = Color.Black
+                },
+                BorderBrush = new BorderBrush()
+                {
+                    Color = Color.Blue
+                },
+            });
+
             stackPanel.AddChild(new Label()
             {
                 Text = "[c=blue][b]bold[/b][/c] [c=#ff00ea][i]italic[/i][/c] [c=97,230,225][b][i]bolditalic[/b][/i][/c] [u]underlined[/u] " +

@@ -151,24 +151,39 @@ namespace Mmc.MonoGame.UI.Base
 
         public void Draw(RenderContext renderContext)
         {
+            InternalDraw(renderContext);
+
             if (ClipToBounds)
             {
                 Rectangle previousScissorRectangle = renderContext.RestartWithNewScissorRectangle(renderContext.CalculateNewScissorRectangle(_contentBounds));
 
-                InternalDraw(renderContext);
+                InternalDrawContent(renderContext);
 
                 renderContext.RestartWithNewScissorRectangle(previousScissorRectangle);
             }
             else
             {
-                InternalDraw(renderContext);
+                InternalDrawContent(renderContext);
             }
         }
 
+        /// <summary>
+        /// Draw items which may be outside the content bounding box.
+        /// </summary>
+        /// <param name="renderContext">current render context.</param>
         public virtual void InternalDraw(RenderContext renderContext)
         {
             BackgroundBrush?.Draw(this, renderContext, BackgroundBounds);
             BorderBrush?.Draw(this, renderContext, GlobalBounds);
+        }
+
+        /// <summary>
+        /// Draw items which are inside the content bounding box.
+        /// </summary>
+        /// <param name="renderContext">current render context.</param>
+        public virtual void InternalDrawContent(RenderContext renderContext)
+        {
+
         }
 
         /// <summary>

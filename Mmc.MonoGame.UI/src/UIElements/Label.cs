@@ -89,9 +89,9 @@ namespace Mmc.MonoGame.UI.UIElements
 
         }
 
-        public override void InternalDraw(RenderContext renderContext)
+        public override void InternalDrawContent(RenderContext renderContext)
         {
-            base.InternalDraw(renderContext);
+            base.InternalDrawContent(renderContext);
 
             if (FontFamily == null || string.IsNullOrEmpty(Text)) return;
 

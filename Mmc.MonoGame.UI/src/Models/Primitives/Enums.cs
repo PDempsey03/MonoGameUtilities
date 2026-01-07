@@ -45,6 +45,14 @@
         XButton2
     }
 
+    public enum ImageStretchMode
+    {
+        None,
+        Fill,
+        Uniform,
+        UniformFill,
+    }
+
     public enum TextureMode
     {
         // stretch texture accross entire destination rectangle

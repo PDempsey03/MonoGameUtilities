@@ -27,9 +27,9 @@ namespace Mmc.MonoGame.UI.Base
             Content?.Update(gameTime);
         }
 
-        public override void InternalDraw(RenderContext renderContext)
+        public override void InternalDrawContent(RenderContext renderContext)
         {
-            base.InternalDraw(renderContext);
+            base.InternalDrawContent(renderContext);
 
             Content?.Draw(renderContext);
         }

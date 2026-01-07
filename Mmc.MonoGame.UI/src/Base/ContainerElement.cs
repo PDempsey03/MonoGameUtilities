@@ -37,9 +37,9 @@ namespace Mmc.MonoGame.UI.Base
             }
         }
 
-        public override void InternalDraw(RenderContext renderContext)
+        public override void InternalDrawContent(RenderContext renderContext)
         {
-            base.InternalDraw(renderContext);
+            base.InternalDrawContent(renderContext);
 
             for (int i = 0; i < Children.Count; i++)
             {
