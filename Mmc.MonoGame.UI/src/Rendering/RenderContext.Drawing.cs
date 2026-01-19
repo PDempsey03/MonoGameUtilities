@@ -45,5 +45,10 @@ namespace Mmc.MonoGame.UI.Rendering
                 currentAngle += deltaAngle;
             }
         }
+
+        public void DrawText(string text, SpriteFont spriteFont, Vector2 position, Color color)
+        {
+            SpriteBatch.DrawString(spriteFont, text, position, color);
+        }
     }
 }

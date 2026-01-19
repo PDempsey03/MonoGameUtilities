@@ -97,15 +97,13 @@ namespace Mmc.MonoGame.UI.UIElements
 
             Vector2 textPosition = ContentBounds.Location.ToVector2(); // top left of the content area
 
-            var spriteBatch = renderContext.SpriteBatch;
-
             foreach (var run in _words)
             {
                 foreach (var segment in run.Segments)
                 {
                     var segmentOffset = textPosition + segment.PositionOffset;
 
-                    spriteBatch.DrawString(segment.Font, segment.Text, segmentOffset, segment.Color);
+                    renderContext.DrawText(segment.Text, segment.Font, segmentOffset, segment.Color);
 
                     if (segment.IsUnderlined)
                     {
@@ -123,14 +121,6 @@ namespace Mmc.MonoGame.UI.UIElements
 
         public override void Measure(Vector2 availableSize)
         {
-            if (FontFamily == null || string.IsNullOrEmpty(Text))
-            {
-                DesiredSize = Vector2.Zero;
-                return;
-            }
-
-            List<MeasuredWord> words = TextLayoutProcessor.ProcessText(Text, FontFamily, TextColor);
-
             float totalWidth = 0;
             float maxHeight = 0;
 
@@ -138,25 +128,34 @@ namespace Mmc.MonoGame.UI.UIElements
             float bordersX = Border.Horizontal;
             float paddingX = Padding.Horizontal;
 
-            if (Wrap)
+            if (FontFamily != null && !string.IsNullOrEmpty(Text))
             {
-                Vector2 wrappedSize = TextLayoutProcessor.WrapWords(words, (Size.X > 0 ? Size.X : availableSize.X) - (marginsX + bordersX + paddingX));
-                totalWidth = wrappedSize.X;
-                maxHeight = wrappedSize.Y;
+                List<MeasuredWord> words = TextLayoutProcessor.ProcessText(Text, FontFamily, TextColor);
+
+                if (Wrap)
+                {
+                    Vector2 wrappedSize = TextLayoutProcessor.WrapWords(words, (Size.X > 0 ? Size.X : availableSize.X) - (marginsX + bordersX + paddingX));
+                    totalWidth = wrappedSize.X;
+                    maxHeight = wrappedSize.Y;
+                }
+                else
+                {
+                    foreach (var run in words)
+                    {
+                        foreach (var segment in run.Segments)
+                        {
+                            totalWidth += segment.Size.X;
+                            maxHeight = MathF.Max(maxHeight, segment.Size.Y);
+                        }
+                    }
+                }
+
+                _words = words;
             }
             else
             {
-                foreach (var run in words)
-                {
-                    foreach (var segment in run.Segments)
-                    {
-                        totalWidth += segment.Size.X;
-                        maxHeight = MathF.Max(maxHeight, segment.Size.Y);
-                    }
-                }
+                _words = [];
             }
-
-            _words = words;
 
             float finalWidth = Size.X > 0 ? Size.X : marginsX + bordersX + paddingX + totalWidth;
             float finalHeight = Size.Y > 0 ? Size.Y : Margin.Vertical + Border.Vertical + Padding.Vertical + maxHeight;
