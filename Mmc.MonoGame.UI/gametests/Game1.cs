@@ -174,6 +174,31 @@ namespace Mmc.MonoGame.UI.GameTests
 
             stackPanel.AddChild(button);
 
+            CheckButton checkButton = new CheckButton()
+            {
+                Size = new Vector2(50),
+                Border = new Thickness(2),
+                Padding = new Thickness(2),
+                Margin = new Thickness(0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                ToggledBrush = new CheckBrush()
+                {
+                    Color = Color.White,
+                    Thickness = 3
+                },
+                BackgroundBrush = new SolidBrush()
+                {
+                    Color = Color.Black,
+                },
+                BorderBrush = new BorderBrush()
+                {
+                    Color = Color.Blue
+                }
+            };
+
+            stackPanel.AddChild(checkButton);
+
             stackPanel.AddChild(new UIImage()
             {
                 Texture = Content.Load<Texture2D>("WarrenWide"),
